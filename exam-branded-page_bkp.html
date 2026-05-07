@@ -1248,17 +1248,13 @@
 
       <div class="rules">
         <h2>Before you begin</h2>
-        <ol id="rulesList">
-          <li id="ruleFullscreen1">The exam will open in fullscreen mode.</li>
-          <li id="ruleFullscreen2">Leaving fullscreen will pause the exam and lock the questions.</li>
+        <ol>
+          <li>The exam will open in fullscreen mode.</li>
+          <li>Leaving fullscreen will pause the exam and lock the questions.</li>
           <li>Switching tabs or windows is recorded and reported.</li>
           <li>Your progress is auto-saved. You may resume if disconnected.</li>
           <li>Once submitted, you cannot retake this exam.</li>
         </ol>
-        <div id="appleMobileNotice" style="display: none; margin-top: 0.85rem; padding: 0.7rem 0.9rem; background: rgba(174, 145, 66, 0.08); border-left: 3px solid var(--nd-gold); font-family: var(--font-display); font-style: italic; font-size: 0.85rem; color: var(--medium-blue);">
-          <strong style="font-style: normal; font-family: var(--font-body); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dark-gold); display: block; margin-bottom: 0.25rem;">Note for iPhone &amp; iPad users</strong>
-          Fullscreen mode is not available on Apple mobile devices. The exam will work normally, but switching to other apps will still be recorded and reported.
-        </div>
       </div>
 
       <label class="acknowledge">
@@ -1452,19 +1448,6 @@
     return `sess_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
   }
 
-  // Detect iOS / iPadOS devices, where the Fullscreen API is unavailable.
-  // We check the user agent for iPhone/iPad/iPod, plus a fallback for modern
-  // iPads that report as "MacIntel" but are really iPads (touchscreen Mac is
-  // an iPad). We deliberately do NOT match on macOS desktop browsers — Macs
-  // support fullscreen normally and should keep using the lock.
-  function isAppleMobile() {
-    const ua = navigator.userAgent || '';
-    if (/iPad|iPhone|iPod/.test(ua)) return true;
-    // iPad on iPadOS 13+ identifies as Mac. Distinguish via touch support.
-    if (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1) return true;
-    return false;
-  }
-
   function formatDateTime(iso) {
     const d = new Date(iso);
     return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) +
@@ -1583,17 +1566,6 @@
 
     document.getElementById('headerExamTitle').textContent = title;
 
-    // Apple mobile devices (iPhone, iPad) cannot use the Fullscreen API.
-    // Hide the fullscreen-specific rules and show a notice instead.
-    if (isAppleMobile()) {
-      const r1 = document.getElementById('ruleFullscreen1');
-      const r2 = document.getElementById('ruleFullscreen2');
-      if (r1) r1.style.display = 'none';
-      if (r2) r2.style.display = 'none';
-      const notice = document.getElementById('appleMobileNotice');
-      if (notice) notice.style.display = 'block';
-    }
-
     loadingPanel.style.display = 'none';
     startForm.style.display = 'block';
     studentNameEl.focus();
@@ -1653,16 +1625,11 @@
       }
     }
 
-    // Apple mobile devices (iPhone, iPad) don't support the Fullscreen API.
-    // Skip the request entirely on those — the exam still runs and tab switches
-    // are still recorded; only the fullscreen lock is unavailable.
-    if (!isAppleMobile()) {
-      try {
-        await document.documentElement.requestFullscreen();
-      } catch (err) {
-        alert('Fullscreen is required to begin the exam. Please allow fullscreen and try again.');
-        return;
-      }
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch (err) {
+      alert('Fullscreen is required to begin the exam. Please allow fullscreen and try again.');
+      return;
     }
 
     if (!resumeData) {
@@ -2175,9 +2142,7 @@
   });
 
   document.addEventListener('fullscreenchange', () => {
-    // Apple mobile devices never enter fullscreen, so this should never fire
-    // there — but guard anyway in case Safari decides to fire something spurious.
-    if (!state.examActive || isAppleMobile()) return;
+    if (!state.examActive) return;
     if (!document.fullscreenElement) {
       state.fullscreenExits++;
       statusValueEl.textContent = 'PAUSED';
