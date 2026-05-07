@@ -1380,7 +1380,8 @@
     devtoolsAttempts: 0,
     startTime: null,
     examActive: false,
-    log: []
+    log: [],
+    previewMode: false
   };
 
   // ===== DOM REFERENCES =====
@@ -1496,6 +1497,14 @@
   // ===== INIT =====
   async function init() {
     const params = new URLSearchParams(window.location.search);
+
+    // Preview mode: teachers loading the exam from edit-exam.html
+    // No proctoring, no auto-save, no submission record, no fullscreen.
+    if (params.get('preview') === 'true') {
+      state.previewMode = true;
+      return initPreview(params.get('id'));
+    }
+
     state.examCode = params.get('code');
 
     if (!state.examCode) {
@@ -1560,6 +1569,106 @@
       console.error('Failed to verify exam:', err);
       showBlocked('Connection error',
         `Could not verify the exam. Please check your connection and refresh. (${err.message || 'unknown'})`);
+    }
+  }
+
+  // ===== PREVIEW MODE INIT =====
+  async function initPreview(examId) {
+    if (!examId) {
+      showBlocked('No exam ID provided', 'Preview must be opened from the exam edit page.');
+      return;
+    }
+
+    // Verify the user is logged in. Preview is for teachers only.
+    try {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) {
+        showBlocked('Not signed in', 'You must be signed in to preview an exam.');
+        return;
+      }
+    } catch (err) {
+      console.warn('Auth check failed:', err);
+    }
+
+    try {
+      const { data, error } = await db.from('exams').select('*').eq('id', examId).maybeSingle();
+      if (error) throw error;
+      if (!data) {
+        showBlocked('Exam not found', 'The exam could not be loaded for preview.');
+        return;
+      }
+
+      if (!data.exam_definition || !data.exam_definition.sections) {
+        showBlocked('No content to preview', 'This exam has no questions yet. Upload a JSON file first.');
+        return;
+      }
+
+      // Look up names for display purposes
+      const [teacherRes, classRes] = await Promise.all([
+        db.from('profiles').select('full_name, email').eq('id', data.teacher_id).maybeSingle(),
+        db.from('classes').select('name').eq('id', data.class_id).maybeSingle()
+      ]);
+      state.teacherName = teacherRes.data?.full_name || teacherRes.data?.email || '—';
+      state.classLabel = classRes.data?.name || '—';
+
+      state.examRecord = data;
+      state.examDef = data.exam_definition;
+      state.examCode = data.code;
+      state.startTime = Date.now();
+
+      // Skip the start screen entirely — drop the teacher straight into the exam
+      const def = state.examDef;
+      const title = def.exam_metadata?.title || `${data.type}`;
+      document.getElementById('headerExamTitle').textContent = title;
+
+      // Replace the student label with a clear "PREVIEW MODE" indicator
+      const studentLabel = document.getElementById('studentLabel');
+      studentLabel.innerHTML = '<span style="color: var(--nd-gold); font-weight: 700; letter-spacing: 0.2em;">PREVIEW MODE</span> · ' + escapeHtml(state.classLabel);
+
+      // Hide the proctoring monitors that don't apply
+      // (we'll keep the timer running just so the teacher sees activity)
+      const monitor = document.querySelector('.monitor');
+      if (monitor) {
+        const items = monitor.querySelectorAll('.monitor-item');
+        items.forEach(item => {
+          const label = item.querySelector('.monitor-label');
+          if (label && (label.textContent === 'Auto-save' ||
+                        label.textContent === 'Tab Switches' ||
+                        label.textContent === 'Status')) {
+            item.style.display = 'none';
+          }
+        });
+      }
+
+      // Hide the section-progress strip's auto-save styling concerns — purely aesthetic, leave it alone
+      renderExam();
+
+      // Replace the Submit button with a Close Preview button
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.textContent = 'Close Preview';
+        submitBtn.onclick = () => window.close();
+        // If window.close fails (e.g. tab opened by user, not by JS), show a message instead
+        submitBtn.addEventListener('click', () => {
+          setTimeout(() => {
+            // If we're still here a moment later, the close didn't work
+            submitBtn.textContent = 'You can close this tab';
+            submitBtn.disabled = true;
+          }, 200);
+        });
+      }
+
+      startScreen.style.display = 'none';
+      examScreen.classList.add('active');
+      state.examActive = true;
+      startTimer();
+      setupSectionTracking();
+      window.scrollTo(0, 0);
+
+    } catch (err) {
+      console.error('Failed to load preview:', err);
+      showBlocked('Preview error',
+        `Could not load the exam for preview. (${err.message || 'unknown'})`);
     }
   }
 
@@ -2099,7 +2208,7 @@
   }
 
   function saveToLocalStorage() {
-    if (!state.examActive) return;
+    if (!state.examActive || state.previewMode) return;
     try {
       localStorage.setItem(lsKey('answers'), JSON.stringify(collectAnswers()));
       localStorage.setItem(lsKey('proctoring'), JSON.stringify(buildProctoringPayload()));
@@ -2136,7 +2245,7 @@
   }
 
   document.addEventListener('input', (e) => {
-    if (!state.examActive) return;
+    if (!state.examActive || state.previewMode) return;
     if (!e.target.matches('input, select, textarea')) return;
     if (!e.target.closest('.exam-body')) return;
     saveToLocalStorage();
@@ -2145,7 +2254,7 @@
   });
 
   document.addEventListener('change', (e) => {
-    if (!state.examActive) return;
+    if (!state.examActive || state.previewMode) return;
     if (!e.target.matches('input, select, textarea')) return;
     if (!e.target.closest('.exam-body')) return;
     saveToLocalStorage();
@@ -2154,7 +2263,7 @@
 
   // ===== TAB / FULLSCREEN ===
   document.addEventListener('visibilitychange', () => {
-    if (!state.examActive) return;
+    if (!state.examActive || state.previewMode) return;
     if (document.hidden) {
       state.switches++;
       updateSwitchDisplay();
@@ -2168,7 +2277,7 @@
   });
 
   window.addEventListener('blur', () => {
-    if (!state.examActive) return;
+    if (!state.examActive || state.previewMode) return;
     state.blurEvents++;
     logEvent('window_blur', `count: ${state.blurEvents}`);
     saveToLocalStorage();
@@ -2177,7 +2286,7 @@
   document.addEventListener('fullscreenchange', () => {
     // Apple mobile devices never enter fullscreen, so this should never fire
     // there — but guard anyway in case Safari decides to fire something spurious.
-    if (!state.examActive || isAppleMobile()) return;
+    if (!state.examActive || state.previewMode || isAppleMobile()) return;
     if (!document.fullscreenElement) {
       state.fullscreenExits++;
       statusValueEl.textContent = 'PAUSED';
@@ -2207,7 +2316,7 @@
   });
 
   document.addEventListener('keydown', e => {
-    if (!state.examActive) return;
+    if (!state.examActive || state.previewMode) return;
     if (e.key === 'F12' ||
         (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
         (e.ctrlKey && e.key === 'u')) {
@@ -2219,7 +2328,7 @@
   });
 
   window.addEventListener('beforeunload', e => {
-    if (state.examActive) {
+    if (state.examActive && !state.previewMode) {
       saveToLocalStorage();
       e.preventDefault();
       e.returnValue = '';

@@ -3700,7 +3700,17 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
   });
 
   document.getElementById('previewBtn').addEventListener('click', () => {
-    showToast('Preview is coming with the exam runner page (next iteration)', 'success');
+    if (!currentExam) return;
+    if (!examDef || !examDef.sections) {
+      showToast('Upload exam content first to preview it', 'error');
+      return;
+    }
+    if (isDirty) {
+      if (!confirm('You have unsaved changes. The preview will show the last saved version. Save first?')) {
+        return;
+      }
+    }
+    window.open(`exam-branded-page.html?preview=true&id=${currentExam.id}`, '_blank');
   });
 
   // ===== METADATA EDIT MODAL =====
