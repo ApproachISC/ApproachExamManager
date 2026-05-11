@@ -1198,14 +1198,15 @@
       : { earned: 0, max, allCorrect: false, allBlank: false };
   }
 
+  // Text-answer comparison is always case-insensitive — capitalization isn't the
+  // point on ESL exams, and students shouldn't lose points for "paris" vs "Paris".
+  // The caseSensitive parameter is kept for compatibility with how callers pass
+  // arguments today, but it's ignored.
   function checkAcceptedAnswer(value, answer, accepted, caseSensitive) {
     if (value == null || value === '') return false;
-    const v = caseSensitive ? value.trim() : value.trim().toLowerCase();
+    const v = value.trim().toLowerCase();
     const candidates = (accepted && accepted.length ? accepted : [answer]).filter(Boolean);
-    return candidates.some(a => {
-      const c = caseSensitive ? a.trim() : a.trim().toLowerCase();
-      return v === c;
-    });
+    return candidates.some(a => v === String(a).trim().toLowerCase());
   }
 
   function gradeFillBlank(q, answers) {
@@ -1413,6 +1414,10 @@
   }
 
   function renderQuestionBody(container, q, answers, result) {
+    // Manual fill_blank should show the score input, not the auto-graded view
+    if (q.type === 'fill_blank' && q.grading === 'manual') {
+      return renderBodyManualSimple(container, q, answers);
+    }
     switch (q.type) {
       case 'multiple_choice':  renderBodySimple(container, q, answers, result); break;
       case 'true_false':       renderBodySimple(container, q, answers, result); break;
