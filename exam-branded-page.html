@@ -1846,6 +1846,10 @@
     }
 
     // Sections + questions
+    // Maintain a running counter so students see sequential numbers (1, 2, 3, ...)
+    // even if the JSON has gaps from edits (e.g., q1, q5, q14). The actual q.id
+    // stays as the internal reference for DOM ids and the answers payload.
+    let displayCounter = 0;
     state.examDef.sections.forEach((section, sIdx) => {
       const partEl = document.createElement('section');
       partEl.className = 'part';
@@ -1873,7 +1877,8 @@
       partEl.innerHTML = html;
 
       (section.questions || []).forEach(q => {
-        const qEl = renderQuestion(q);
+        displayCounter++;
+        const qEl = renderQuestion(q, displayCounter);
         if (qEl) partEl.appendChild(qEl);
       });
 
@@ -1910,14 +1915,15 @@
   }
 
   // ===== QUESTION RENDERERS =====
-  function renderQuestion(q) {
+  function renderQuestion(q, displayNumber) {
     const qEl = document.createElement('div');
     qEl.className = 'question';
     qEl.id = `q-${q.id}`;
     qEl.dataset.qid = q.id;
     qEl.dataset.qtype = q.type;
+    qEl.dataset.displayNumber = displayNumber;
 
-    const numHtml = `<span class="q-number">${escapeHtml(displayId(q.id))}</span>`;
+    const numHtml = `<span class="q-number">${escapeHtml(String(displayNumber))}</span>`;
 
     switch (q.type) {
       case 'multiple_choice': renderMultipleChoice(qEl, q, numHtml); break;
@@ -2394,9 +2400,13 @@
     const blanksList = document.getElementById('blanksList');
     if (blanks.length > 0) {
       blanksList.style.display = 'block';
-      document.getElementById('blanksChips').innerHTML = blanks.map(id =>
-        `<button class="blank-chip" onclick="jumpToQuestion('${escapeHtml(id)}')">${escapeHtml(displayId(id))}</button>`
-      ).join('');
+      document.getElementById('blanksChips').innerHTML = blanks.map(id => {
+        // Look up the display number from the rendered question element.
+        // Fall back to the raw id if not found, just to be safe.
+        const el = document.getElementById(`q-${id}`);
+        const num = el?.dataset.displayNumber || id;
+        return `<button class="blank-chip" onclick="jumpToQuestion('${escapeHtml(id)}')">${escapeHtml(num)}</button>`;
+      }).join('');
     } else {
       blanksList.style.display = 'none';
     }

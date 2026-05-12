@@ -1136,6 +1136,10 @@
     }
 
     container.innerHTML = '';
+    // Sequential question numbers (1, 2, 3, ...) across the whole exam, matching
+    // what the student saw on the exam page. The actual q.id stays as the
+    // internal reference for everything else.
+    let displayCounter = 0;
     examDef.sections.forEach((section, sIdx) => {
       const sectionEl = document.createElement('div');
       sectionEl.className = 'section-block';
@@ -1158,7 +1162,8 @@
 
       const qContainer = sectionEl.querySelector('.section-questions');
       (section.questions || []).forEach(q => {
-        const qEl = renderQuestionResult(q);
+        displayCounter++;
+        const qEl = renderQuestionResult(q, displayCounter);
         if (qEl) qContainer.appendChild(qEl);
       });
     });
@@ -1368,7 +1373,7 @@
   }
 
   // ===== RENDER QUESTION RESULT =====
-  function renderQuestionResult(q) {
+  function renderQuestionResult(q, displayNumber) {
     const answers = submission.answers || {};
     const result = gradeQuestion(q);
     const qEl = document.createElement('div');
@@ -1398,7 +1403,7 @@
 
     qEl.innerHTML = `
       <div class="q-header">
-        <span class="q-id">${escapeHtml(displayId(q.id))}</span>
+        <span class="q-id">${escapeHtml(String(displayNumber))}</span>
         <div class="q-prompt">${escapeHtml(q.prompt || '')}</div>
         <div class="q-meta">
           <span class="q-points-badge">${earnedDisplay}</span>
