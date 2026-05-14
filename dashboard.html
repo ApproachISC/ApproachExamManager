@@ -269,6 +269,122 @@
     color: var(--nd-blue);
     border-color: var(--nd-gold);
   }
+  .share-icon-btn:hover {
+    background: var(--medium-blue);
+    color: var(--light-warm-white);
+    border-color: var(--medium-blue);
+  }
+
+  /* ===== SHARE MODAL ===== */
+  .share-modal {
+    background: #fff;
+    max-width: 760px;
+    width: 100%;
+    border-top: 6px solid var(--nd-gold);
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    margin: 2rem auto;
+    text-align: center;
+  }
+  .share-modal-stamp {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: var(--nd-gold);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .share-modal h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--nd-blue);
+    margin-bottom: 0.2rem;
+    line-height: 1.15;
+  }
+  .share-modal-sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--medium-blue);
+    margin-bottom: 1.75rem;
+  }
+  .share-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .share-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .share-col-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--medium-blue);
+  }
+  .qr-box {
+    background: #fff;
+    padding: 1rem;
+    border: 1px solid var(--dark-sky-blue);
+    line-height: 0;
+  }
+  .qr-box img, .qr-box canvas {
+    display: block;
+  }
+  .share-divider {
+    width: 1px;
+    background: var(--dark-sky-blue);
+    align-self: stretch;
+  }
+  .share-code-big {
+    font-family: 'JetBrains Mono', monospace, var(--font-body);
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--nd-blue);
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+    word-break: break-all;
+    background: var(--light-sky-blue);
+    border: 2px solid var(--nd-gold);
+    padding: 1rem 1.25rem;
+    width: 100%;
+  }
+  .share-url {
+    font-size: 0.8rem;
+    color: var(--medium-blue);
+    word-break: break-all;
+    font-family: 'JetBrains Mono', monospace, var(--font-body);
+  }
+  .share-window {
+    background: var(--light-warm-white);
+    border-left: 3px solid var(--nd-gold);
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--medium-blue);
+    margin-bottom: 1.5rem;
+    display: inline-block;
+  }
+  .share-window strong {
+    color: var(--nd-blue);
+    font-weight: 600;
+  }
+  .share-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  @media (max-width: 640px) {
+    .share-columns { grid-template-columns: 1fr; gap: 1.5rem; }
+    .share-divider { display: none; }
+    .share-code-big { font-size: 2rem; }
+  }
   .class-cell { font-weight: 500; }
   .meta-cell { font-size: 0.78rem; color: var(--medium-blue); white-space: nowrap; }
 
@@ -664,12 +780,40 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="shareModal">
+  <div class="share-modal">
+    <div class="share-modal-stamp">Share with Class</div>
+    <h2 id="shareModalTitle">Examination</h2>
+    <div class="share-modal-sub" id="shareModalSub">Project this screen so students can scan or type</div>
+
+    <div class="share-columns">
+      <div class="share-col">
+        <div class="share-col-label">Scan to open</div>
+        <div class="qr-box" id="shareQrBox"></div>
+      </div>
+      <div class="share-divider"></div>
+      <div class="share-col">
+        <div class="share-col-label">Or enter this code</div>
+        <div class="share-code-big" id="shareCodeBig">—</div>
+        <div class="share-url" id="shareUrl">—</div>
+      </div>
+    </div>
+
+    <div class="share-window" id="shareWindow">—</div>
+
+    <div class="share-actions">
+      <button class="btn-secondary" onclick="closeShareModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <div class="copyright">
   Copyright © 2026 Approach International Student Center, Inc. — All rights reserved.
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = 'https://okyauyzdensuvuoyphds.supabase.co';
@@ -909,6 +1053,10 @@
             <div class="code-cell">
               <span>${exam.code}</span>
               <button class="copy-icon-btn" onclick="copyToClipboard('${exam.code}')" title="Copy code">⎘</button>
+              ${exam.status === 'active'
+                ? `<button class="copy-icon-btn share-icon-btn" onclick="openShareModal('${exam.id}')" title="Share with class">⤢</button>`
+                : ''
+              }
             </div>
           </td>
           <td class="class-cell">${escapeHtml(exam.class_name)}</td>
@@ -940,6 +1088,71 @@
     });
   }
   window.copyToClipboard = copyToClipboard;
+
+  // ===== SHARE MODAL =====
+  // Builds the URL to the enter-code page relative to where the dashboard is
+  // hosted, so there's no hardcoded host to maintain. The code is passed as a
+  // query parameter; once enter-code.html is updated to read it, scanning the
+  // QR will pre-fill the code. Until then, the QR still lands on the entry page.
+  function buildEntryUrl(code) {
+    const url = new URL('enter-code.html', window.location.href);
+    url.searchParams.set('code', code);
+    return url.toString();
+  }
+
+  function openShareModal(examId) {
+    const exam = allExams.find(e => e.id === examId);
+    if (!exam) return;
+
+    const entryUrl = buildEntryUrl(exam.code);
+
+    document.getElementById('shareModalTitle').textContent =
+      `${exam.class_name} — ${exam.type}`;
+    document.getElementById('shareModalSub').textContent =
+      'Project this screen so students can scan or type';
+    document.getElementById('shareCodeBig').textContent = exam.code;
+    document.getElementById('shareUrl').textContent =
+      entryUrl.replace(/\?.*$/, ''); // show the bare page URL, not the long query string
+    document.getElementById('shareWindow').innerHTML =
+      `Open <strong>${formatDate(exam.available_from)}</strong> &nbsp;→&nbsp; <strong>${formatDate(exam.available_until)}</strong>`;
+
+    // Render the QR code fresh each time
+    const qrBox = document.getElementById('shareQrBox');
+    qrBox.innerHTML = '';
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(qrBox, {
+        text: entryUrl,
+        width: 260,
+        height: 260,
+        colorDark: '#0c2340',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } else {
+      qrBox.innerHTML = '<div style="padding: 2rem; color: var(--accent-red); font-family: var(--font-display); font-style: italic;">QR code library could not be loaded. Students can still enter the code manually.</div>';
+    }
+
+    document.getElementById('shareModal').classList.add('active');
+  }
+  window.openShareModal = openShareModal;
+
+  function closeShareModal() {
+    document.getElementById('shareModal').classList.remove('active');
+    document.getElementById('shareQrBox').innerHTML = '';
+  }
+  window.closeShareModal = closeShareModal;
+
+  // Close share modal when clicking the dark overlay
+  document.getElementById('shareModal').addEventListener('click', (e) => {
+    if (e.target.id === 'shareModal') closeShareModal();
+  });
+
+  // Close share modal on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('shareModal').classList.contains('active')) {
+      closeShareModal();
+    }
+  });
 
   async function quickStatusChange(id, newStatus) {
     const exam = allExams.find(e => e.id === id);

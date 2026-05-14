@@ -741,8 +741,33 @@
     }[c]));
   }
 
-  // Auto-focus the first box on load
-  boxes[0].focus();
+  // ===== PREFILL FROM URL =====
+  // When students scan the QR code from the dashboard's Share modal, they
+  // arrive with ?code=YYYYQQ-TTXXXX in the URL. Strip non-alphanumerics
+  // (so a hyphen in the code is fine), drop it into the boxes, and let the
+  // existing checkIfComplete() flow auto-verify. If there's no code param,
+  // or it's not exactly 12 characters, fall back to focusing the first box.
+  function prefillFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('code');
+    if (!raw) {
+      boxes[0].focus();
+      return;
+    }
+    const cleaned = raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (cleaned.length !== 12) {
+      // Malformed code param — ignore it and let the student type
+      boxes[0].focus();
+      return;
+    }
+    for (let i = 0; i < 12; i++) {
+      boxes[i].value = cleaned[i];
+    }
+    // Trigger the same path a finished manual entry would
+    checkIfComplete();
+  }
+
+  prefillFromUrl();
 </script>
 
 </body>

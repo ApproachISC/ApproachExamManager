@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
 <title>Examination — Approach International Student Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1241,7 +1242,7 @@
 
       <div class="name-fields">
         <label>Full Name
-          <input type="text" id="studentName" required placeholder="Type your full name" autocomplete="off">
+          <input type="text" id="studentName" required placeholder="Type your full name" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false">
           <span class="help-text">Your name will be saved in uppercase.</span>
         </label>
       </div>
@@ -1814,6 +1815,7 @@
     logEvent(resumeData ? 'exam_resumed' : 'exam_started', `student: ${name}`);
     startTimer();
     setupSectionTracking();
+    requestWakeLock();
     window.scrollTo(0, 0);
   });
 
@@ -1826,6 +1828,34 @@
       const s = String(elapsed % 60).padStart(2, '0');
       timerEl.textContent = `${m}:${s}`;
     }, 1000);
+  }
+
+  // ===== SCREEN WAKE LOCK =====
+  // Keeps the device screen on during the exam. Supported on modern mobile
+  // browsers (iOS Safari 16.4+, Android Chrome). Silently does nothing on
+  // older devices or where the request is denied — graceful fallback.
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    if (!('wakeLock' in navigator)) return;
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      // The lock can be released by the system (tab hidden, etc.). When that
+      // happens, clear our reference so we know to re-acquire it later.
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } catch (err) {
+      // Request can be rejected (low battery, permissions, unsupported) —
+      // not an error worth surfacing to the student.
+      console.warn('Wake lock request failed:', err);
+      wakeLock = null;
+    }
+  }
+
+  async function releaseWakeLock() {
+    if (wakeLock) {
+      try { await wakeLock.release(); } catch (err) { /* ignore */ }
+      wakeLock = null;
+    }
   }
 
   // ===== RENDER EXAM =====
@@ -1995,7 +2025,7 @@
   }
 
   function renderFillBlank(qEl, q, numHtml) {
-    const inputHtml = `<input type="text" class="blank-input" name="${escapeHtml(q.id)}" autocomplete="off">`;
+    const inputHtml = `<input type="text" class="blank-input" name="${escapeHtml(q.id)}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">`;
     const promptHtml = escapeHtml(q.prompt).replace('{blank}', inputHtml);
     qEl.innerHTML = `<div class="q-prompt">${numHtml}${promptHtml}</div>`;
   }
@@ -2003,7 +2033,7 @@
   function renderFillBlankMulti(qEl, q, numHtml) {
     let html = escapeHtml(q.prompt);
     (q.blanks || []).forEach(blank => {
-      const input = `<input type="text" class="blank-input" name="${escapeHtml(blank.id)}" autocomplete="off">`;
+      const input = `<input type="text" class="blank-input" name="${escapeHtml(blank.id)}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">`;
       html = html.replace('{blank}', input);
     });
     qEl.innerHTML = `<div class="q-prompt">${numHtml}${html}</div>`;
@@ -2063,14 +2093,14 @@
     qEl.innerHTML = `
       <div class="q-prompt">${numHtml}${escapeHtml(q.prompt || '')}</div>
       <div class="order-words">${(q.words || []).map(escapeHtml).join(' / ')}</div>
-      <input type="text" class="order-input" name="${escapeHtml(q.id)}" placeholder="Write the sentence in correct order…" autocomplete="off">
+      <input type="text" class="order-input" name="${escapeHtml(q.id)}" placeholder="Write the sentence in correct order…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     `;
   }
 
   function renderShortAnswer(qEl, q, numHtml) {
     qEl.innerHTML = `
       <div class="q-prompt">${numHtml}${escapeHtml(q.prompt)}</div>
-      <input type="text" class="short-input" name="${escapeHtml(q.id)}" autocomplete="off">
+      <input type="text" class="short-input" name="${escapeHtml(q.id)}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     `;
   }
 
@@ -2078,7 +2108,7 @@
     qEl.innerHTML = `
       <div class="q-prompt">${numHtml}${escapeHtml(q.prompt)}</div>
       <div class="writing-wrap">
-        <textarea class="writing-input" name="${escapeHtml(q.id)}" placeholder="Write your answer here…"></textarea>
+        <textarea class="writing-input" name="${escapeHtml(q.id)}" placeholder="Write your answer here…" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
         <div class="word-count"><strong>0</strong> words</div>
       </div>
     `;
@@ -2096,7 +2126,7 @@
         <div class="pool-sentence-row">
           <div class="pool-sentence-num">${String(i).padStart(2, '0')}</div>
           <div class="pool-sentence-input writing-wrap">
-            <textarea class="writing-input" rows="2" name="${escapeHtml(q.id)}__${i}" placeholder="Sentence ${i}…"></textarea>
+            <textarea class="writing-input" rows="2" name="${escapeHtml(q.id)}__${i}" placeholder="Sentence ${i}…" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
             <div class="word-count"><strong>0</strong> words</div>
           </div>
         </div>
@@ -2126,7 +2156,7 @@
     const labelsHtml = (q.labels || []).map(label => `
       <div class="image-label-item">
         <div class="image-label-name">${escapeHtml(label.label)}</div>
-        <input type="text" class="image-label-input" name="${escapeHtml(q.id)}__${escapeHtml(label.id)}" autocomplete="off">
+        <input type="text" class="image-label-input" name="${escapeHtml(q.id)}__${escapeHtml(label.id)}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       </div>
     `).join('');
 
@@ -2279,6 +2309,9 @@
       logEvent('tab_visible');
       showToast(`Tab switch detected (${state.switches} total)`);
       saveToSupabase(true);
+      // The OS releases the wake lock whenever the tab is hidden, so we
+      // re-acquire it each time the student comes back to the exam.
+      requestWakeLock();
     }
   });
 
@@ -2334,6 +2367,7 @@
   });
 
   window.addEventListener('beforeunload', e => {
+    releaseWakeLock();
     if (state.examActive && !state.previewMode) {
       saveToLocalStorage();
       e.preventDefault();
@@ -2469,6 +2503,7 @@
       localStorage.removeItem(lsKey('proctoring'));
 
       if (document.fullscreenElement) document.exitFullscreen();
+      releaseWakeLock();
       document.querySelector('.section-progress').style.display = 'none';
 
       examScreen.innerHTML = `
