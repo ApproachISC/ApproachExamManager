@@ -311,6 +311,7 @@
   }
   .share-columns {
     display: grid;
+    grid-auto-flow: column;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     align-items: center;
@@ -1110,7 +1111,7 @@
       `${exam.class_name} — ${exam.type}`;
     document.getElementById('shareModalSub').textContent =
       'Project this screen so students can scan or type';
-    document.getElementById('shareCodeBig').textContent = exam.code;
+    document.getElementById('shareCodeBig').textContent = exam.code.split('-').join('<br>-<br>');
     document.getElementById('shareUrl').textContent =
       entryUrl.replace(/\?.*$/, ''); // show the bare page URL, not the long query string
     document.getElementById('shareWindow').innerHTML =
