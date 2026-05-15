@@ -556,6 +556,19 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .q-points {
+    display: inline-block;
+    background: var(--light-warm-white);
+    color: var(--nd-blue);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    margin-left: 0.4rem;
+    vertical-align: 1px;
+    border: 1px solid var(--medium-blue);
+    border-radius: 2px;
+  }
+
   .q-prompt {
     font-size: 1rem;
     line-height: 1.65;
@@ -1954,7 +1967,9 @@
     qEl.dataset.qtype = q.type;
     qEl.dataset.displayNumber = displayNumber;
 
-    const numHtml = `<span class="q-number">${escapeHtml(String(displayNumber))}</span>`;
+    const pointsText = q.points ? `${q.points} pt${q.points === 1 ? '' : 's'}` : '';
+    const pointsHtml = pointsText ? `<span class="q-points">${escapeHtml(pointsText)}</span>` : '';
+    const numHtml = `<span class="q-number">${escapeHtml(String(displayNumber))}</span>${pointsHtml}`;
 
     switch (q.type) {
       case 'multiple_choice': renderMultipleChoice(qEl, q, numHtml); break;
