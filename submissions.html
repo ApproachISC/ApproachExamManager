@@ -363,6 +363,47 @@
   }
   .btn-secondary:hover { background: var(--medium-blue); color: var(--light-warm-white); }
 
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background: #fff;
+    border-bottom: 3px solid var(--nd-gold);
+    box-shadow: 0 2px 8px rgba(12, 35, 64, 0.04);
+  }
+  .pagination-btn {
+    background: transparent;
+    border: 1px solid var(--medium-blue);
+    color: var(--medium-blue);
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-width: 36px;
+  }
+  .pagination-btn:hover { background: var(--medium-blue); color: var(--light-warm-white); }
+  .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pagination-btn:disabled:hover { background: transparent; color: var(--medium-blue); }
+  .pagination-info {
+    font-size: 0.75rem;
+    color: var(--medium-blue);
+    font-weight: 500;
+    margin: 0 0.5rem;
+    white-space: nowrap;
+  }
+  .pagination-separator {
+    width: 1px;
+    height: 20px;
+    background: var(--dark-sky-blue);
+    margin: 0 0.25rem;
+  }
+
   .toast {
     position: fixed;
     top: 5rem;
@@ -524,6 +565,17 @@
       </tbody>
     </table>
   </div>
+
+  <div class="pagination" id="paginationContainer" style="display: none;">
+    <button class="pagination-btn" id="prevBtn" onclick="previousPage()">← Previous</button>
+    <div class="pagination-separator"></div>
+    <div class="pagination-info">
+      Page <span id="currentPageNum">1</span> of <span id="totalPageNum">1</span>
+    </div>
+    <span class="pagination-info" id="rowsInfo">Showing 1–10 of 10</span>
+    <div class="pagination-separator"></div>
+    <button class="pagination-btn" id="nextBtn" onclick="nextPage()">Next →</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -546,6 +598,8 @@
   let allClasses = [];
   let sortBy = 'submitted_at';
   let sortDir = 'desc';
+  let currentPage = 1;
+  const ROWS_PER_PAGE = 20;
 
   const submissionsBody = document.getElementById('submissionsBody');
   const searchEl = document.getElementById('search');
@@ -746,6 +800,7 @@
   function renderTable() {
     const subs = getFilteredSubmissions();
     resultsCount.textContent = `${subs.length} submission${subs.length === 1 ? '' : 's'}`;
+    const paginationContainer = document.getElementById('paginationContainer');
 
     if (subs.length === 0) {
       submissionsBody.innerHTML = `
@@ -754,10 +809,20 @@
           <h3>No submissions found</h3>
           <p>${allSubmissions.length === 0 ? 'No students have started any exams yet.' : 'Try adjusting your filters.'}</p>
         </div></td></tr>`;
+      paginationContainer.style.display = 'none';
       return;
     }
 
-    submissionsBody.innerHTML = subs.map(s => {
+    // Calculate pagination
+    const totalPages = Math.ceil(subs.length / ROWS_PER_PAGE);
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const start = (currentPage - 1) * ROWS_PER_PAGE;
+    const end = start + ROWS_PER_PAGE;
+    const pageSubmissions = subs.slice(start, end);
+
+    submissionsBody.innerHTML = pageSubmissions.map(s => {
       let statusChip;
       if (s.status === 'in_progress') {
         statusChip = '<span class="chip in_progress">In Progress</span>';
@@ -800,6 +865,19 @@
           </td>
         </tr>`;
     }).join('');
+
+    // Update pagination controls
+    if (subs.length > ROWS_PER_PAGE) {
+      paginationContainer.style.display = 'flex';
+      document.getElementById('currentPageNum').textContent = currentPage;
+      document.getElementById('totalPageNum').textContent = totalPages;
+      document.getElementById('rowsInfo').textContent =
+        `Showing ${start + 1}–${Math.min(end, subs.length)} of ${subs.length}`;
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage === totalPages;
+    } else {
+      paginationContainer.style.display = 'none';
+    }
   }
 
   async function deleteInProgress(id, studentName) {
@@ -816,6 +894,26 @@
     }
   }
   window.deleteInProgress = deleteInProgress;
+
+  function previousPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      renderTable();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+  window.previousPage = previousPage;
+
+  function nextPage() {
+    const subs = getFilteredSubmissions();
+    const totalPages = Math.ceil(subs.length / ROWS_PER_PAGE);
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderTable();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+  window.nextPage = nextPage;
 
   // ===== CSV EXPORT =====
   document.getElementById('exportCsvBtn').addEventListener('click', () => {
@@ -864,8 +962,8 @@
   });
 
   [searchEl, filterExam, filterStatus, filterDate].forEach(el => {
-    el.addEventListener('input', renderTable);
-    el.addEventListener('change', renderTable);
+    el.addEventListener('input', () => { currentPage = 1; renderTable(); });
+    el.addEventListener('change', () => { currentPage = 1; renderTable(); });
   });
 
   document.querySelectorAll('th[data-sort]').forEach(th => {
@@ -879,6 +977,7 @@
       });
       th.classList.add('sorted');
       th.querySelector('.sort-arrow').textContent = sortDir === 'asc' ? '↑' : '↓';
+      currentPage = 1;
       renderTable();
     });
   });
