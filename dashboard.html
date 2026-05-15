@@ -626,6 +626,47 @@
   .toast.error { border-left-color: var(--accent-red); }
   .toast.success { border-left-color: var(--success-green); }
 
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background: #fff;
+    border-bottom: 3px solid var(--nd-gold);
+    box-shadow: 0 2px 8px rgba(12, 35, 64, 0.04);
+  }
+  .pagination-btn {
+    background: transparent;
+    border: 1px solid var(--medium-blue);
+    color: var(--medium-blue);
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-width: 36px;
+  }
+  .pagination-btn:hover { background: var(--medium-blue); color: var(--light-warm-white); }
+  .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pagination-btn:disabled:hover { background: transparent; color: var(--medium-blue); }
+  .pagination-info {
+    font-size: 0.75rem;
+    color: var(--medium-blue);
+    font-weight: 500;
+    margin: 0 0.5rem;
+    white-space: nowrap;
+  }
+  .pagination-separator {
+    width: 1px;
+    height: 20px;
+    background: var(--dark-sky-blue);
+    margin: 0 0.25rem;
+  }
+
   .copyright {
     text-align: center;
     padding: 1.5rem 2rem;
@@ -779,6 +820,17 @@
       </tbody>
     </table>
   </div>
+
+  <div class="pagination" id="paginationContainer" style="display: none;">
+    <button class="pagination-btn" id="prevBtn" onclick="previousPage()">← Previous</button>
+    <div class="pagination-separator"></div>
+    <div class="pagination-info">
+      Page <span id="currentPageNum">1</span> of <span id="totalPageNum">1</span>
+    </div>
+    <span class="pagination-info" id="rowsInfo">Showing 1–10 of 10</span>
+    <div class="pagination-separator"></div>
+    <button class="pagination-btn" id="nextBtn" onclick="nextPage()">Next →</button>
+  </div>
 </div>
 
 <div class="modal-overlay" id="shareModal">
@@ -830,6 +882,8 @@
   let allTeachers = [];
   let sortBy = 'created_at';
   let sortDir = 'desc';
+  let currentPage = 1;
+  const ROWS_PER_PAGE = 10;
 
   const examsBody = document.getElementById('examsBody');
   const searchEl = document.getElementById('search');
@@ -1031,6 +1085,7 @@
     const exams = getFilteredExams();
     const isTeacher = currentProfile.role === 'teacher';
     const colspan = isTeacher ? 8 : 9;
+    const paginationContainer = document.getElementById('paginationContainer');
 
     if (exams.length === 0) {
       examsBody.innerHTML = `
@@ -1040,10 +1095,20 @@
           <p>${allExams.length === 0 ? 'Create your first exam to get started.' : 'Try adjusting your filters.'}</p>
           ${allExams.length === 0 ? '<a href="create-exam.html" class="btn-primary">+ Create Exam</a>' : ''}
         </div></td></tr>`;
+      paginationContainer.style.display = 'none';
       return;
     }
 
-    examsBody.innerHTML = exams.map(exam => {
+    // Calculate pagination
+    const totalPages = Math.ceil(exams.length / ROWS_PER_PAGE);
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const start = (currentPage - 1) * ROWS_PER_PAGE;
+    const end = start + ROWS_PER_PAGE;
+    const pageExams = exams.slice(start, end);
+
+    examsBody.innerHTML = pageExams.map(exam => {
       const windowState = getWindowStatus(exam);
       const isArchived = exam.status === 'archived';
       const teacherCell = isTeacher ? '' : `<td>${escapeHtml(exam.teacher_name)}</td>`;
@@ -1081,6 +1146,19 @@
           </td>
         </tr>`;
     }).join('');
+
+    // Update pagination controls
+    if (exams.length > ROWS_PER_PAGE) {
+      paginationContainer.style.display = 'flex';
+      document.getElementById('currentPageNum').textContent = currentPage;
+      document.getElementById('totalPageNum').textContent = totalPages;
+      document.getElementById('rowsInfo').textContent =
+        `Showing ${start + 1}–${Math.min(end, exams.length)} of ${exams.length}`;
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage === totalPages;
+    } else {
+      paginationContainer.style.display = 'none';
+    }
   }
 
   function copyToClipboard(text) {
@@ -1089,6 +1167,26 @@
     });
   }
   window.copyToClipboard = copyToClipboard;
+
+  function previousPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      renderTable();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+  window.previousPage = previousPage;
+
+  function nextPage() {
+    const exams = getFilteredExams();
+    const totalPages = Math.ceil(exams.length / ROWS_PER_PAGE);
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderTable();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+  window.nextPage = nextPage;
 
   // ===== SHARE MODAL =====
   // Builds the URL to the enter-code page relative to where the dashboard is
@@ -1206,6 +1304,7 @@
       if (s.teacher != null && filterTeacher) filterTeacher.value = s.teacher;
       if (s.sortBy) sortBy = s.sortBy;
       if (s.sortDir) sortDir = s.sortDir;
+      currentPage = 1;
       // Update sort arrows
       document.querySelectorAll('th[data-sort]').forEach(t => {
         if (t.dataset.sort === sortBy) {
@@ -1221,8 +1320,8 @@
 
   [searchEl, filterStatus, filterLevel, filterQuarter, filterYear, filterTeacher].forEach(el => {
     if (!el) return;
-    el.addEventListener('input', () => { saveFilterState(); renderTable(); });
-    el.addEventListener('change', () => { saveFilterState(); renderTable(); });
+    el.addEventListener('input', () => { currentPage = 1; saveFilterState(); renderTable(); });
+    el.addEventListener('change', () => { currentPage = 1; saveFilterState(); renderTable(); });
   });
 
   document.querySelectorAll('th[data-sort]').forEach(th => {
@@ -1236,6 +1335,7 @@
       });
       th.classList.add('sorted');
       th.querySelector('.sort-arrow').textContent = sortDir === 'asc' ? '↑' : '↓';
+      currentPage = 1;
       saveFilterState();
       renderTable();
     });

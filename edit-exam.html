@@ -3746,8 +3746,11 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
         allTeachers.map(t =>
           `<option value="${t.id}" ${t.id === e.teacher_id ? 'selected' : ''}>${escapeHtml(t.full_name || t.email)}${t.role === 'academic' ? ' (Academic)' : ''}</option>`).join('');
     } else {
-      // Teachers can't change teacher — hide the field entirely
-      teacherFieldEl.style.display = 'none';
+      // Teachers can view but not change the teacher field
+      teacherFieldEl.style.display = 'flex';
+      teacherSelect.disabled = true;
+      const currentTeacher = allTeachers.find(t => t.id === e.teacher_id);
+      teacherSelect.innerHTML = `<option value="${e.teacher_id}" selected>${escapeHtml(currentTeacher?.full_name || currentTeacher?.email || 'Unknown')}${currentTeacher?.role === 'academic' ? ' (Academic)' : ''}</option>`;
     }
 
     document.getElementById('metaEditAvailableFrom').value = formatDateForInput(e.available_from);
