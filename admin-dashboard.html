@@ -580,8 +580,20 @@
     <span>Approach International Student Center</span>
   </div>
   <div class="brand-bar-right">
-    <span class="user-info"><strong id="userName">—</strong><span id="userRole"></span></span>
-    <button class="signout-btn" id="signoutBtn">Sign Out</button>
+    <div class="user-menu">
+      <button class="user-menu-trigger" id="userMenuTrigger">
+        <span class="user-info">
+          <strong id="userName">—</strong>
+          <span id="userRole"></span>
+        </span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ae9142" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-icon lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span style="font-size: 0.9em;">▼</span>
+      </button>
+      <div class="user-menu-dropdown" id="userMenuDropdown">
+        <a href="profile.html">Profile</a>
+        <button id="signoutBtn">Sign Out</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -833,7 +845,7 @@
 
     currentProfile = profile;
     document.getElementById('userName').textContent = profile.full_name || session.user.email;
-    document.getElementById('userRole').textContent = ' · Academic Team';
+    document.getElementById('userRole').textContent = (profile.role === 'academic' ? 'Academic Team' : 'Teacher');
     return true;
   }
 
