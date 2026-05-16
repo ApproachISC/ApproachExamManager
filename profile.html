@@ -530,9 +530,9 @@
       window.location.href = 'login.html';
       return;
     }
-
+    currentUser = session.user;
     try {
-      const { data: user } = await db.auth.getUser();
+      const user = currentUser;
       const { data: profile, error: profileError } = await db.from('profiles')
         .select('full_name, role, is_active, created_at')
         .eq('id', user.id)
