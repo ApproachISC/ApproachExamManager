@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 <style>
   :root {
     --nd-blue: #0c2340;
@@ -328,7 +329,7 @@
     display: grid;
     grid-template-columns: 2fr 1fr auto;
     gap: 0.75rem;
-    align-items: end;
+    align-items: center;
   }
   .field { display: flex; flex-direction: column; gap: 0.4rem; }
   .field label {
@@ -579,10 +580,11 @@
 
 <div class="brand-bar">
   <div class="brand-bar-logo">
-    <span class="brand-monogram">A</span>
-    <span>Approach International Student Center</span>
+    <img src="images/gold-logo.png" alt="Approach International Student Center" class="brand-logo">
   </div>
   <div class="brand-bar-right">
+    <!--<a href="assessment-dashboard.html" class="nav-link">Assessments</a>-->
+    <a href="dashboard.html" class="nav-link">Exams</a>
     <div class="user-menu">
       <button class="user-menu-trigger" id="userMenuTrigger">
         <span class="user-info">
@@ -593,6 +595,9 @@
         <span style="font-size: 0.9em;">▼</span>
       </button>
       <div class="user-menu-dropdown" id="userMenuDropdown">
+        <a href="qr-generator.html" target="_blank">QR Code Generator ➚</a>
+        <a href="tasgac_session_log.html" target="_blank">TAs Session Log Report ➚</a>
+        <a href="admin-dashboard.html" id="adminLink" style="display:none;">Administration</a>
         <a href="profile.html">Profile</a>
         <button id="signoutBtn">Sign Out</button>
       </div>

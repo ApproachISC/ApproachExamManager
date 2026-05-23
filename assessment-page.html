@@ -28,6 +28,7 @@
     padding: 2.25rem 2.5rem 2rem;
   }
   .institutional-mark { text-align: center; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--dark-sky-blue); }
+  .institutional-mark img { width: 64px; }
   .crest {
     display: inline-block; width: 50px; height: 50px;
     border: 2px solid var(--nd-blue); border-radius: 50%;
@@ -108,6 +109,7 @@
   .match-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.6rem 1.25rem; align-items: center; margin-top: 0.75rem; }
   .match-left { padding: 0.6rem 0.85rem; background: var(--medium-sky-blue); border-left: 2px solid var(--nd-gold); font-size: 0.95rem; color: var(--nd-blue); }
   .match-arrow { text-align: center; color: var(--nd-gold); font-family: var(--font-display); font-size: 1.2rem; }
+  .match-arrow-down { display: none; text-align: center; color: var(--nd-gold); font-family: var(--font-display); font-size: 1.2rem; }
   .match-grid select { padding: 0.55rem 0.85rem; font-family: var(--font-body); font-size: 0.95rem; border: 1px solid var(--dark-sky-blue); background: #fff; color: var(--nd-blue); cursor: pointer; }
   .match-grid select:focus { outline: none; border-color: var(--nd-gold); box-shadow: 0 0 0 3px rgba(174,145,66,0.15); }
   /* Drag reorder */
@@ -184,10 +186,13 @@
   @media (max-width: 600px) {
     .start-card { padding: 1.75rem 1.25rem; }
     .assess-body { padding: 1.5rem 1rem 6rem; }
-    .match-grid { grid-template-columns: 1fr; gap: 0.4rem; }
+    .match-grid { display: flex; flex-direction: column; gap: 0.4rem; }
+    .match-grid select { width: 100%; }
     .match-arrow { display: none; }
+    .match-arrow-down { display: block; }
     .dc-columns { grid-template-columns: 1fr 1fr; }
     .nav-prev, .nav-next, .nav-submit { padding: 0.75rem 1rem; font-size: 0.68rem; }
+    .question { width: 100%; }
   }
 </style>
 </head>
@@ -197,7 +202,7 @@
 <div class="start-screen" id="startScreen">
   <div class="start-card">
     <div class="institutional-mark">
-      <div class="crest">A</div>
+      <img src="images/black-logo.png" alt="Approach International Student Center">
       <div class="institutional-name">Approach<span style="color:var(--nd-gold);">USA</span></div>
       <div class="institutional-sub">International Student Center</div>
     </div>
@@ -723,6 +728,7 @@
       const opts = right.map(r => `<option value="${escapeHtml(r.key)}">${escapeHtml(r.key)}) ${escapeHtml(r.text)}</option>`).join('');
       gridHtml += `<div class="match-left">${escapeHtml(l.id)}) ${escapeHtml(l.text)}</div>
         <div class="match-arrow">→</div>
+        <div class="match-arrow-down">↓</div>
         <select name="${escapeHtml(q.id)}__${escapeHtml(l.id)}"><option value="">— select —</option>${opts}</select>`;
     });
     el.innerHTML = `<div class="q-prompt">${numHtml}${escapeHtml(q.prompt)}${ptsHtml}</div><div class="match-grid">${gridHtml}</div>`;

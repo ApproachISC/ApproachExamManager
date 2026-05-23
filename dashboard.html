@@ -46,12 +46,12 @@
 <div class="page" id="page" style="display: none;">
   <div class="page-header">
     <div>
-      <div class="page-stamp" id="pageStamp">Examinations</div>
-      <h1 id="pageTitle">All <em>Examinations</em></h1>
+      <div class="page-stamp" id="pageStamp">Exams</div>
+      <h1 id="pageTitle">All <em>Exams</em></h1>
       <p class="page-sub" id="pageSub">Manage, edit, and archive your created exams</p>
     </div>
     <div class="header-actions">
-      <a href="create-exam.html" class="btn-primary">+ New Examination</a>
+      <a href="create-exam.html" class="btn-primary">+ New Exam</a>
     </div>
   </div>
 
@@ -134,7 +134,7 @@
         </tr>
       </thead>
       <tbody id="examsBody">
-        <tr><td colspan="9"><div class="empty-state"><p>Loading examinations…</p></div></td></tr>
+        <tr><td colspan="9"><div class="empty-state"><p>Loading exams…</p></div></td></tr>
       </tbody>
     </table>
   </div>
@@ -276,8 +276,8 @@
     }
 
     if (profile.role === 'teacher') {
-      document.getElementById('pageStamp').textContent = 'My Examinations';
-      document.getElementById('pageTitle').innerHTML = 'My <em>Examinations</em>';
+      document.getElementById('pageStamp').textContent = 'My Exams';
+      document.getElementById('pageTitle').innerHTML = 'My <em>Exams</em>';
       document.getElementById('pageSub').textContent = 'Manage, edit, and archive the exams you have created';
       document.getElementById('teacherFilterField').style.display = 'none';
       document.getElementById('filtersContainer').classList.add('no-teacher');
@@ -359,7 +359,7 @@
       console.error('Failed to load:', err);
       examsBody.innerHTML = `
         <tr><td colspan="9"><div class="empty-state">
-          <h3>Could not load examinations</h3>
+          <h3>Could not load exams</h3>
           <p>${escapeHtml(err.message || 'Check your connection.')}</p>
         </div></td></tr>`;
       document.getElementById('authLoading').style.display = 'none';
@@ -427,7 +427,7 @@
       examsBody.innerHTML = `
         <tr><td colspan="${colspan}"><div class="empty-state">
           <div class="icon">⌗</div>
-          <h3>No examinations found</h3>
+          <h3>No exams found</h3>
           <p>${allExams.length === 0 ? 'Create your first exam to get started.' : 'Try adjusting your filters.'}</p>
           ${allExams.length === 0 ? '<a href="create-exam.html" class="btn-primary">+ Create Exam</a>' : ''}
         </div></td></tr>`;
