@@ -155,7 +155,7 @@
 <div class="modal-overlay" id="shareModal">
   <div class="share-modal">
     <div class="share-modal-stamp">Share with Class</div>
-    <h2 id="shareModalTitle">Examination</h2>
+    <h2 id="shareModalTitle">Exam</h2>
     <div class="share-modal-sub" id="shareModalSub">Project this screen so students can scan or type</div>
 
     <div class="share-columns">
@@ -602,7 +602,7 @@
       exam.status = newStatus;
       updateStats();
       renderTable();
-      showToast(`Examination ${verb}d successfully`, 'success');
+      showToast(`Exam ${verb}d successfully`, 'success');
     } catch (err) {
       console.error(err);
       showToast(`Failed to ${verb}: ${err.message}`, 'error');

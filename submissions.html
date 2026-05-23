@@ -571,7 +571,7 @@
 <div class="page" id="page" style="display: none;">
   <div class="page-header">
     <div>
-      <div class="page-stamp">Examination Review</div>
+      <div class="page-stamp">Exam Review</div>
       <h1 id="pageTitle">All <em>Submissions</em></h1>
       <p class="page-sub" id="pageSub">Review and grade student responses</p>
     </div>
@@ -602,9 +602,9 @@
       <input type="text" id="search" placeholder="Student name, code, or class…">
     </div>
     <div class="filter-field">
-      <label for="filterExam">Examination</label>
+      <label for="filterExam">Exam</label>
       <select id="filterExam">
-        <option value="">All examinations</option>
+        <option value="">All exams</option>
       </select>
     </div>
     <div class="filter-field">
@@ -814,7 +814,7 @@
         });
 
       // Populate exam filter dropdown
-      filterExam.innerHTML = '<option value="">All examinations</option>' +
+      filterExam.innerHTML = '<option value="">All exams</option>' +
         allExams.map(e => {
           const cls = allClasses.find(c => c.id === e.class_id);
           return `<option value="${e.id}">${escapeHtml(e.code)} — ${escapeHtml(cls?.name || 'Unknown class')}</option>`;

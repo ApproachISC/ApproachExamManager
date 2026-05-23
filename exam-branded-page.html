@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google" content="notranslate">
-<title>Examination — Approach International Student Center</title>
+<title>Exam — Approach International Student Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1228,14 +1228,14 @@
       <div class="institutional-sub">International Student Center</div>
     </div>
 
-    <div class="stamp" id="examStamp">Examination · Loading…</div>
-    <h1 id="examTitle">Examination</h1>
-    <p class="subtitle" id="examSubtitle">Online proctored examination</p>
+    <div class="stamp" id="examStamp">Exam · Loading…</div>
+    <h1 id="examTitle">Exam</h1>
+    <p class="subtitle" id="examSubtitle">Online proctored exam</p>
 
     <div id="loadingPanel" class="loading-panel">
       <div class="spinner spinner-large"></div>
       <p style="font-family: var(--font-display); font-style: italic; color: var(--medium-blue);">
-        Verifying your examination…
+        Verifying your exam…
       </p>
     </div>
 
@@ -1282,7 +1282,7 @@
         <span>I have read the rules and understand that any irregularity will be recorded and reported to my teacher.</span>
       </label>
 
-      <button class="start-btn" id="startBtn" disabled>Begin Examination</button>
+      <button class="start-btn" id="startBtn" disabled>Begin Exam</button>
     </div>
   </div>
 </div>
@@ -1291,7 +1291,7 @@
 <div class="exam-screen" id="examScreen">
   <header class="exam-header">
     <div class="exam-title">
-      <span id="headerExamTitle">Examination</span>
+      <span id="headerExamTitle">Exam</span>
       <small id="studentLabel">—</small>
     </div>
     <div class="monitor">
@@ -1554,12 +1554,12 @@
       }
       if (now < from) {
         showBlocked('This exam is not available yet',
-          `The examination opens on ${formatDateTime(data.available_from)}.`, true);
+          `The exam opens on ${formatDateTime(data.available_from)}.`, true);
         return;
       }
       if (now > until) {
         showBlocked('This exam window has ended',
-          `The examination closed on ${formatDateTime(data.available_until)}. Please contact your teacher.`);
+          `The exam closed on ${formatDateTime(data.available_until)}. Please contact your teacher.`);
         return;
       }
 
@@ -1700,7 +1700,7 @@
 
     const totalQ = def.sections.reduce((sum, s) => sum + (s.questions?.length || 0), 0);
     document.getElementById('examSubtitle').textContent =
-      `${totalQ} questions · Online proctored examination`;
+      `${totalQ} questions · Online proctored exam`;
 
     document.getElementById('infoClass').textContent = state.classLabel;
     document.getElementById('infoTeacher').textContent = state.teacherName;
@@ -1934,7 +1934,7 @@
     const submitBtn = document.createElement('button');
     submitBtn.className = 'submit-btn';
     submitBtn.id = 'submitBtn';
-    submitBtn.textContent = 'Submit Examination';
+    submitBtn.textContent = 'Submit Exam';
     examBody.appendChild(submitBtn);
 
     submitBtn.addEventListener('click', openSubmitModal);

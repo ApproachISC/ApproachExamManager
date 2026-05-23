@@ -534,13 +534,13 @@
 
 <div id="content" style="display: none;">
   <div class="breadcrumb">
-    <a href="dashboard.html">Exams</a> <span>›</span> <span>New Examination</span>
+    <a href="dashboard.html">Exams</a> <span>›</span> <span>New Exam</span>
   </div>
 
   <div class="page">
     <div class="page-header">
       <div class="page-stamp">Exam Administration · Create</div>
-      <h1>New <em>Examination</em></h1>
+      <h1>New <em>Exam</em></h1>
       <p class="page-sub">Configure a new exam and generate its access code</p>
     </div>
 
@@ -627,7 +627,7 @@
 
         <div class="form-actions">
           <a href="dashboard.html" class="btn-secondary">Cancel</a>
-          <button type="submit" class="btn-primary" id="submitBtn" disabled>Create Examination</button>
+          <button type="submit" class="btn-primary" id="submitBtn" disabled>Create Exam</button>
         </div>
       </div>
     </form>
@@ -660,7 +660,7 @@
 <div class="success-overlay" id="successOverlay">
   <div class="success-card">
     <div class="check">✓</div>
-    <h2>Examination Created</h2>
+    <h2>Exam Created</h2>
     <p style="color: var(--medium-blue); font-style: italic; font-family: var(--font-display); font-size: 1.05rem;">
       The exam is saved and the access code is ready to share.
     </p>
@@ -983,7 +983,7 @@
         showToast('Failed to save: ' + (err.message || 'Unknown error'), 'error');
       }
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Create Examination';
+      submitBtn.textContent = 'Create Exam';
     }
   });
 
