@@ -456,12 +456,25 @@
   </div>
 
   <!-- jsQR -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
+  <script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
 
   <script>
     let stream = null, rafId = null, scanning = false;
     let currentResult = '';
     const history = [];
+    let jsqrReady = false;
+
+    // Confirm jsQR loaded; if not, poll briefly
+    function ensureJsQR() {
+      return new Promise((resolve, reject) => {
+        if (typeof jsQR === 'function') { resolve(); return; }
+        let attempts = 0;
+        const iv = setInterval(() => {
+          if (typeof jsQR === 'function') { clearInterval(iv); resolve(); }
+          else if (++attempts > 40) { clearInterval(iv); reject(new Error('jsQR failed to load')); }
+        }, 100);
+      });
+    }
 
     const video     = document.getElementById('video');
     const canvas    = document.getElementById('canvas');
@@ -513,7 +526,13 @@
       }
 
       video.srcObject = stream;
-      video.onloadedmetadata = () => { scanning = true; tick(); };
+      video.onloadedmetadata = async () => {
+        try { await ensureJsQR(); } catch(e) {
+          overlayMsg.innerHTML = '<i class="ti ti-alert-circle" aria-hidden="true" style="font-size:44px;opacity:0.6;color:#c1415e"></i><span>jsQR library failed to load</span>';
+          overlayMsg.style.display = 'flex'; setbadge('error'); return;
+        }
+        scanning = true; tick();
+      };
       camBtn.innerHTML = '<i class="ti ti-video-off" aria-hidden="true"></i> Stop Camera';
       camBtn.style.background = 'var(--accent-red)';
       overlayMsg.style.display = 'none';
@@ -547,9 +566,10 @@
       rafId = requestAnimationFrame(tick);
     }
 
-    function handleFile(e) {
+    async function handleFile(e) {
       const file = e.target.files[0];
       if (!file) return;
+      try { await ensureJsQR(); } catch(err) { showToast('jsQR library not loaded yet'); return; }
       const reader = new FileReader();
       reader.onload = ev => {
         const img = new Image();
