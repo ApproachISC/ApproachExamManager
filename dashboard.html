@@ -13,13 +13,11 @@
 
 <div class="brand-bar">
   <div class="brand-bar-logo">
-    <span class="brand-monogram">A</span>
-    <span>Approach International Student Center</span>
+    <img src="images/gold-logo.png" alt="Approach International Student Center" class="brand-logo">
   </div>
   <div class="brand-bar-right">
-    <a href="admin-dashboard.html" class="nav-link" id="adminLink" style="display: none;">Administration</a>
+    <!--<a href="assessment-dashboard.html" class="nav-link">Assessments</a>-->
     <a href="dashboard.html" class="nav-link">Exams</a>
-    <a href="submissions.html" class="nav-link">Submissions</a>
     <div class="user-menu">
       <button class="user-menu-trigger" id="userMenuTrigger">
         <span class="user-info">
@@ -30,6 +28,9 @@
         <span style="font-size: 0.9em;">▼</span>
       </button>
       <div class="user-menu-dropdown" id="userMenuDropdown">
+        <a href="qr-generator.html" target="_blank">QR Code Generator ➚</a>
+        <a href="tasgac_session_log.html" target="_blank">TAs Session Log Report ➚</a>
+        <a href="admin-dashboard.html" id="adminLink" style="display:none;">Administration</a>
         <a href="profile.html">Profile</a>
         <button id="signoutBtn">Sign Out</button>
       </div>
@@ -242,6 +243,7 @@
 
   async function checkAuth() {
     const { data: { session } } = await db.auth.getSession();
+
     if (!session) {
       window.location.href = 'login.html';
       return false;
@@ -262,6 +264,10 @@
       return false;
     }
     currentProfile = profile;
+    if (!profile.full_name) {
+      window.location.href = 'setup-account.html';
+      return false;
+    }
     document.getElementById('userName').textContent = profile.full_name || session.user.email;
     document.getElementById('userRole').textContent = (profile.role === 'academic' ? 'Academic Team' : 'Teacher');
 
