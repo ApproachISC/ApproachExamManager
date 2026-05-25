@@ -166,6 +166,8 @@
       assessment=aRes.data;
       examDef=assessment.assessment_definition;
 
+      document.getElementById('bcStudent').textContent=submission.student_name;
+
       // Back link
       document.getElementById('backBtn').href=`assessment-submissions.html?id=${assessment.id}`;
 
