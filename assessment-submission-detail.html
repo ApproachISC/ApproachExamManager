@@ -41,55 +41,68 @@
 <div class="auth-loading" id="authLoading"><div class="spinner"></div><p style="font-family:var(--font-display);font-style:italic;">Loading submission…</p></div>
 
 <div id="content" style="display:none;">
-
-  <div class="meta-bar">
-    <div style="flex:1;">
-      <div class="meta-info" id="metaInfo">
-        <div class="meta-block"><span class="meta-label">Student</span><span class="meta-value" id="metaStudent">—</span></div>
-        <div class="meta-block"><span class="meta-label">Assessment</span><span class="meta-value" id="metaAssessmentTitle" style="font-weight:600;">—</span></div>
-        <div class="meta-block"><span class="meta-label">Code</span><span class="meta-value code" id="metaCode">—</span></div>
-        <div class="meta-block"><span class="meta-label">Class</span><span class="meta-value" id="metaClass">—</span></div>
-        <div class="meta-block"><span class="meta-label">Submitted</span><span class="meta-value" id="metaSubmitted">—</span></div>
-        <div class="meta-block"><span class="meta-label">Duration</span><span class="meta-value" id="metaDuration">—</span></div>
-        <div class="meta-block"><span class="meta-label">Results Shown</span><span class="meta-value" id="metaResultsShown">—</span></div>
+  <div class="breadcrumb">
+    <a href="assessment-dashboard.html">Submissions</a> <span>›</span> <span id="bcStudent">—</span>
+  </div>
+  <div class="page">
+    <div class="meta-bar">
+      <div style="flex:1;">
+        <div class="meta-info" id="metaInfo">
+          <div class="meta-block"><span class="meta-label">Student</span><span class="meta-value" id="metaStudent">—</span></div>
+          <div class="meta-block"><span class="meta-label">Assessment</span><span class="meta-value" id="metaAssessmentTitle" style="font-weight:600;">—</span></div>
+          <div class="meta-block"><span class="meta-label">Code</span><span class="meta-value code" id="metaCode">—</span></div>
+          <div class="meta-block"><span class="meta-label">Class</span><span class="meta-value" id="metaClass">—</span></div>
+          <div class="meta-block"><span class="meta-label">Submitted</span><span class="meta-value" id="metaSubmitted">—</span></div>
+          <div class="meta-block"><span class="meta-label">Duration</span><span class="meta-value" id="metaDuration">—</span></div>
+          <div class="meta-block"><span class="meta-label">Results Shown</span><span class="meta-value" id="metaResultsShown">—</span></div>
+        </div>
+      </div>
+      <div class="meta-actions">
+        <a href="#" class="btn-secondary" id="backBtn">← All Submissions</a>
       </div>
     </div>
-    <div class="meta-actions">
-      <a href="#" class="btn-secondary" id="backBtn">← All Submissions</a>
-    </div>
-  </div>
 
-  <div class="layout">
-    <div class="main-col">
-      <div id="sectionsContainer"></div>
-    </div>
-
-    <aside class="sidebar">
-      <div class="panel">
-        <div class="panel-title">Score Summary</div>
-        <div class="summary-row"><span class="label">Auto Score</span><span class="value" id="sumAuto">—</span></div>
-        <div class="summary-row"><span class="label">Max Score</span><span class="value" id="sumMax">—</span></div>
-        <div class="summary-row" style="border-top:2px solid var(--nd-gold);padding-top:0.75rem;margin-top:0.25rem;">
-          <span class="label" style="font-weight:600;color:var(--nd-blue);">Total</span>
-          <span class="value" style="font-weight:700;color:var(--nd-blue);font-size:1.1rem;" id="sumTotal">—</span>
+    <div class="layout">
+      <div class="main-col">
+        <!-- ===== RESPONSES ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Student Responses</div>
+              <div class="card-subtitle">Each question with the student's answer and grading</div>
+            </div>
+          </div>
+          <div id="sectionsContainer"></div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">Results Visibility</div>
-        <div id="visibilityInfo" style="font-family:var(--font-display);font-style:italic;font-size:0.9rem;color:var(--medium-blue);line-height:1.45;">—</div>
-      </div>
+      <aside class="sidebar">
+        <div class="panel">
+          <div class="panel-title">Score Summary</div>
+          <div class="summary-row"><span class="label">Auto Score</span><span class="value" id="sumAuto">—</span></div>
+          <div class="summary-row"><span class="label">Max Score</span><span class="value" id="sumMax">—</span></div>
+          <div class="summary-row" style="border-top:2px solid var(--nd-gold);padding-top:0.75rem;margin-top:0.25rem;">
+            <span class="label" style="font-weight:600;color:var(--nd-blue);">Total</span>
+            <span class="value" style="font-weight:700;color:var(--nd-blue);font-size:1.1rem;" id="sumTotal">—</span>
+          </div>
+        </div>
 
-      <div class="panel">
-        <div class="panel-title">Review</div>
-        <label class="acknowledge-row">
-          <input type="checkbox" id="reviewedCheckbox">
-          <span>Mark as reviewed</span>
-        </label>
-        <textarea class="reviewer-notes-input" id="reviewerNotes" placeholder="Internal notes about this submission…"></textarea>
-        <button class="btn-primary" id="saveGradeBtn" style="width:100%;margin-top:0.85rem;">Save Review</button>
-      </div>
-    </aside>
+        <div class="panel">
+          <div class="panel-title">Results Visibility</div>
+          <div id="visibilityInfo" style="font-family:var(--font-display);font-style:italic;font-size:0.9rem;color:var(--medium-blue);line-height:1.45;">—</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Review</div>
+          <label class="acknowledge-row">
+            <input type="checkbox" id="reviewedCheckbox">
+            <span>Mark as reviewed</span>
+          </label>
+          <textarea class="reviewer-notes-input" id="reviewerNotes" placeholder="Internal notes about this submission…"></textarea>
+          <button class="btn-primary" id="saveGradeBtn" style="width:100%;margin-top:0.85rem;">Save Review</button>
+        </div>
+      </aside>
+    </div>
   </div>
 </div>
 
@@ -351,7 +364,7 @@
 
   // ----- Renderers -----
   function mark(ok){return ok?'<span style="color:var(--success-green);font-weight:700;">✓</span>':'<span style="color:var(--accent-red);font-weight:700;">✗</span>';}
-  function studentVal(v,blank){return `<span class="response-value ${blank?'blank':''}">${escapeHtml(v||'(blank)')}</span>`;}
+  function studentVal(v,blank,ok){return `<span class="response-value ${blank?'blank':''} ${ok?'correct':'incorrect'}">${escapeHtml(v||'(blank)')}</span>`;}
   function expectedVal(v){return `<span class="expected">${escapeHtml(v||'—')}</span>`;}
 
   function renderBodyMC(c,q,a,r){
@@ -384,41 +397,85 @@
 
   function renderBodyTF(c,q,a,r){
     const v=a[q.id]; const ok=String(v).toUpperCase()===String(q.answer).toUpperCase();
-    c.innerHTML=`<div class="response-section"><div class="sub-row"><span class="sub-label">Answer</span>${studentVal(v?v==='T'?'True':'False':null,!v)}<span class="sub-expected">correct: ${q.answer==='T'?'True':'False'}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div></div>`;}
+    c.innerHTML=`<div class="response-section">
+      <div class="sub-row">
+        <span class="sub-label">Answer</span>
+        <div class="pair-grid">
+          <div>
+            ${studentVal(v?v==='T'?'True':'False':null,!v,ok)}
+            <span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span>
+          </div>
+          <div><span class="response-value expected">${q.answer==='T'?'True':'False'}</span></div>
+        </div>
+      </div>
+    </div>`;}
 
   function renderBodyFB(c,q,a,r){
     const v=a[q.id]; const ok=r.allCorrect;
-    c.innerHTML=`<div class="response-section"><div class="sub-row"><span class="sub-label">Answer</span>${studentVal(v,!v)}<span class="sub-expected">expected: ${escapeHtml(q.answer||'—')}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div></div>`;}
+    c.innerHTML=`<div class="response-section"><div class="sub-row"><span class="sub-label">Answer</span>${studentVal(v,!v,ok)}<span class="response-value expected">${escapeHtml(q.answer||'—')}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div></div>`;}
 
   function renderBodyFBM(c,q,a){
     const blanks=q.blanks||[];
     const rows=blanks.map(b=>{
       const v=a[b.id]; const cands=(b.accepted_answers?.length?b.accepted_answers:[b.answer]).filter(Boolean);
       const ok=v&&cands.some(ca=>ca.trim().toLowerCase()===(v||'').trim().toLowerCase());
-      return `<div class="sub-row"><span class="sub-label">${escapeHtml(b.id)}</span>${studentVal(v,!v)}<span class="sub-expected">expected: ${escapeHtml(b.answer||'—')}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div>`;
+      return `<div class="sub-row"><span class="sub-label">${escapeHtml(b.id)}</span>${studentVal(v,!v,ok)}<span class="response-value expected">${escapeHtml(b.answer||'—')}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div>`;
     }).join('');
     c.innerHTML=`<div class="response-section"><div class="response-label">Per-blank breakdown</div>${rows}</div>`;}
 
   function renderBodyDD(c,q,a,r){
     const v=a[q.id]; const ok=r.allCorrect;
-    c.innerHTML=`<div class="response-section"><div class="sub-row"><span class="sub-label">Selected</span>${studentVal(v,!v)}<span class="sub-expected">correct: ${escapeHtml(q.answer||'—')}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div></div>`;}
+    c.innerHTML=`<div class="response-section"><div class="sub-row"><span class="sub-label">Selected</span>${studentVal(v,!v,ok)}<span class="response-value expected">${escapeHtml(q.answer||'—')}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div></div>`;}
 
   function renderBodyMatching(c,q,a){
     const rows=(q.left_items||[]).map(l=>{
       const given=a[`${q.id}__${l.id}`]; const expected=(q.answers||{})[l.id]; const ok=given===expected;
-      return `<div class="sub-row"><span class="sub-label">${escapeHtml(l.id)}) ${escapeHtml(l.text)}</span>${studentVal(given,!given)}<span class="sub-expected">correct: ${escapeHtml(expected||'—')}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div>`;
+      return `<div class="sub-row">
+        <span class="sub-label">${escapeHtml(l.id)}) ${escapeHtml(l.text)}</span>
+        <div class="pair-grid">
+          <div>
+            ${studentVal(given,!given,ok)}
+            <span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span>
+          </div>
+          <div><span class="response-value expected">${escapeHtml(expected||'—')}</span></div>
+        </div>
+      </div>`;
     }).join('');
     c.innerHTML=`<div class="response-section"><div class="response-label">Matches</div>${rows}</div>`;}
 
   function renderBodyDragReorder(c,q,a,r){
     const v=a[q.id]; const ok=r.allCorrect;
-    c.innerHTML=`<div class="response-section"><div class="sub-row"><span class="sub-label">Order</span>${studentVal(v,!v)}<span class="sub-expected">expected: ${escapeHtml(q.expected||'—')}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div></div>`;}
+    c.innerHTML=`<div class="response-section">
+      <div class="sub-row">
+        <span class="sub-label">Order</span>
+        <div class="pair-grid">
+          <div>
+            ${studentVal(v,!v,ok)}
+            <span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span>
+          </div>
+          <div>
+            <span class="response-value expected">${escapeHtml(q.expected||'—')}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;}
 
   function renderBodyDragCategorize(c,q,a){
     const rows=(q.items||[]).map(it=>{
       const given=a[`${q.id}__${it}`]; const expected=(q.answers||{})[it]; const ok=given===expected;
       const catLabel=id=>(q.categories||[]).find(cat=>cat.id===id)?.label||id;
-      return `<div class="sub-row"><span class="sub-label">${escapeHtml(it)}</span>${studentVal(given?catLabel(given):null,!given)}<span class="sub-expected">correct: ${escapeHtml(catLabel(expected||''))}</span><span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span></div>`;
+      return `<div class="sub-row">
+        <span class="sub-label">${escapeHtml(it)}</span>
+        <div class="pair-grid">
+          <div>
+            ${studentVal(given?catLabel(given):null,!given,ok)}
+            <span class="sub-mark ${ok?'correct':'incorrect'}">${ok?'✓':'✗'}</span>
+          </div>
+          <div>
+            <span class="response-value expected">${escapeHtml(catLabel(expected||''))}</span>
+          </div>
+        </div>
+        </div>`;
     }).join('');
     c.innerHTML=`<div class="response-section"><div class="response-label">Categories</div>${rows}</div>`;}
 

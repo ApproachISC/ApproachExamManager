@@ -1211,7 +1211,7 @@
     document.getElementById('resultsScreen').classList.add('active');
 
     const visibility = state.previewMode ? 'full_breakdown' : (state.assessment.results_visibility || 'none');
-    const title = state.def.exam_metadata?.title || 'Assessment';
+    const title = state.assessment.title || 'Assessment';
     document.getElementById('resultsTitle').textContent = `${title} — Complete`;
     document.getElementById('resultsSubtitle').textContent = `${state.student} · ${state.classLabel}`;
 
