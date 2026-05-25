@@ -42,7 +42,7 @@
 
 <div id="content" style="display:none;">
   <div class="breadcrumb">
-    <a href="assessment-dashboard.html">Submissions</a> <span>›</span> <span id="bcStudent">—</span>
+    <a href="#" id="bcBackBtn">Submissions</a> <span>›</span> <span id="bcStudent">—</span>
   </div>
   <div class="page">
     <div class="meta-bar">
@@ -169,6 +169,7 @@
       document.getElementById('bcStudent').textContent=submission.student_name;
 
       // Back link
+      document.getElementById('bcBackBtn').href=`assessment-submissions.html?id=${assessment.id}`;
       document.getElementById('backBtn').href=`assessment-submissions.html?id=${assessment.id}`;
 
       // Meta
