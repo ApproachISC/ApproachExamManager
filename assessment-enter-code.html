@@ -114,7 +114,20 @@
     document.getElementById('statusMessage').textContent = message;
     document.getElementById('statusDetail').innerHTML = detail;
   }
-  function checkIfComplete() { const code = boxes.map(b=>b.value.toUpperCase()).join(''); if(code.length===12&&!isChecking)verifyCode(code); }
+
+  function getCurrentCode() {
+    const chars = Array.from(boxes).map(b => b.value.toUpperCase()).join('');
+    if (chars.length !== 12) return null;
+    // Format: YYYYQQ-TTXXXX  (positions 0-5, then 6-11 with hyphen between)
+    return `${chars.slice(0, 6)}-${chars.slice(6)}`;
+  }
+
+  function checkIfComplete() {
+    const code = getCurrentCode();
+    if (code && !isChecking) {
+      verifyCode(code);
+    }
+  }
 
   boxes.forEach((box,idx) => {
     box.addEventListener('input', (e) => {

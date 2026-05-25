@@ -422,7 +422,7 @@
 
   function populateStartScreen() {
     const d = state.assessment;
-    const title = state.def.exam_metadata?.title || 'Assessment';
+    const title = state.assessment.title || 'Assessment';
     const totalQ = state.def.sections.reduce((s, sec) => s + (sec.questions?.length || 0), 0);
     document.getElementById('examStamp').textContent = `${state.classLabel} · ${d.quarter} ${d.year}`;
     document.getElementById('examTitle').innerHTML = `<em>${escapeHtml(title)}</em>`;
