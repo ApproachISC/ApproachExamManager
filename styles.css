@@ -44,6 +44,14 @@ body {
   height: 30px;
   width: auto;
 }
+@media (max-width: 500px) {
+  .brand-bar-logo img {
+    height: 30px;
+    width: 34px;
+    object-fit: cover;
+    object-position: left;
+  }
+}
 .brand-monogram {
   font-family: var(--font-display);
   font-size: 1.3rem; 
@@ -130,6 +138,9 @@ main {
   align-items: flex-end;
 }
 .user-info strong { color: var(--nd-gold); font-weight: 600; }
+@media (max-width: 500px) {
+  .user-info { display: none; }
+}
 .nav-link {
   color: var(--dark-sky-blue);
   text-decoration: none;
