@@ -151,7 +151,7 @@
     showPanel('checking','Checking','Verifying…','');
     try {
       const { data: exam, error } = await db.from('assessments')
-        .select('*, classes:class_id(name), teacher:teacher_id(full_name,email)')
+        .select('*')
         .eq('code', code).maybeSingle();
       if (error) throw error;
       if (!exam) {
@@ -159,8 +159,15 @@
         showPanel('error','Invalid Code','Code not recognized','That code does not match any assessment. Please check it and try again.');
         document.getElementById('actions').style.display='flex'; isChecking=false; return;
       }
+
+      // Fetch teacher and class separately — Supabase can't auto-join teacher_id
+      // because it references auth.users (not a public table).
+      const [teacherRes, classRes] = await Promise.all([
+        db.from('profiles').select('full_name, email').eq('id', exam.teacher_id).maybeSingle(),
+        db.from('classes').select('name').eq('id', exam.class_id).maybeSingle()
+      ]);
       const now=new Date(), from=new Date(exam.available_from), until=new Date(exam.available_until);
-      const className=exam.classes?.name||'—', teacherName=exam.teacher?.full_name||exam.teacher?.email||'—';
+      const className=classRes.data?.name||'—', teacherName=teacherRes.data?.full_name||teacherRes.data?.email||'—';
       if (exam.status==='draft') { showPanel('error','Not Published','Not available yet','This assessment has not been published.'); document.getElementById('actions').style.display='flex'; isChecking=false; return; }
       if (exam.status==='archived') { showPanel('closed','Archived','No longer available','This assessment has been archived.'); document.getElementById('actions').style.display='flex'; isChecking=false; return; }
       if (now<from) {

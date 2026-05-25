@@ -857,7 +857,7 @@ tbody td {
   gap: 1.25rem;
   margin-bottom: 1.5rem;
 }
-.modal-field { display: flex; flex-direction: column; gap: 0.4rem; }
+.modal-field { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
 .modal-field.full { grid-column: 1 / -1; }
 .modal-field label {
   font-size: 0.6rem;
