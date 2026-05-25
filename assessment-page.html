@@ -403,7 +403,7 @@
       state.startTime = Date.now();
       buildPages();
       document.getElementById('startScreen').style.display = 'none';
-      document.getElementById('headerTitle').textContent = data.assessment_definition.exam_metadata?.title || 'Assessment';
+      document.getElementById('headerTitle').textContent = state.assessment.title || 'Assessment';
       document.getElementById('headerStudent').innerHTML = '<span style="color:var(--nd-gold);font-weight:700;letter-spacing:0.2em;">PREVIEW MODE</span>';
       state.active = true;
       navigateTo(0);
@@ -493,7 +493,7 @@
     }
 
     document.getElementById('headerTitle').textContent =
-      state.def.exam_metadata?.title || 'Assessment';
+      state.assessment.title || 'Assessment';
     document.getElementById('headerStudent').textContent = `${name} · ${state.teacherName}`;
     document.getElementById('startScreen').style.display = 'none';
     state.active = true;
