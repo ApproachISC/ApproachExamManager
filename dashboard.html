@@ -18,7 +18,6 @@
   <div class="brand-bar-right">
     <!--<a href="assessment-dashboard.html" class="nav-link">Assessments</a>-->
     <a href="dashboard.html" class="nav-link">Exams</a>
-    <a href="submissions.html" class="nav-link">Submissions</a>
     <div class="user-menu">
       <button class="user-menu-trigger" id="userMenuTrigger">
         <span class="user-info">
@@ -125,17 +124,14 @@
         <tr>
           <th data-sort="code">Code <span class="sort-arrow">↕</span></th>
           <th data-sort="class_name">Class <span class="sort-arrow">↕</span></th>
-          <th data-sort="level_name">Level <span class="sort-arrow">↕</span></th>
-          <th data-sort="type">Type <span class="sort-arrow">↕</span></th>
           <th data-sort="teacher_name" id="thTeacher">Teacher <span class="sort-arrow">↕</span></th>
           <th data-sort="available_from">Window <span class="sort-arrow">↕</span></th>
-          <th>Window Status</th>
           <th data-sort="status" class="sorted">Status <span class="sort-arrow">↓</span></th>
           <th style="text-align: right;">Actions</th>
         </tr>
       </thead>
       <tbody id="examsBody">
-        <tr><td colspan="9"><div class="empty-state"><p>Loading exams…</p></div></td></tr>
+        <tr><td colspan="5"><div class="empty-state"><p>Loading exams…</p></div></td></tr>
       </tbody>
     </table>
   </div>
@@ -359,7 +355,7 @@
     } catch (err) {
       console.error('Failed to load:', err);
       examsBody.innerHTML = `
-        <tr><td colspan="9"><div class="empty-state">
+        <tr><td colspan="5"><div class="empty-state">
           <h3>Could not load exams</h3>
           <p>${escapeHtml(err.message || 'Check your connection.')}</p>
         </div></td></tr>`;
@@ -421,7 +417,7 @@
   function renderTable() {
     const exams = getFilteredExams();
     const isTeacher = currentProfile.role === 'teacher';
-    const colspan = isTeacher ? 8 : 9;
+    const colspan = isTeacher ? 4 : 5;
     const paginationContainer = document.getElementById('paginationContainer');
 
     if (exams.length === 0) {
@@ -462,18 +458,20 @@
               }
             </div>
           </td>
-          <td class="class-cell">${escapeHtml(exam.class_name)}</td>
-          <td><span class="meta-cell">${escapeHtml(exam.level_name)}</span></td>
-          <td><span class="meta-cell">${exam.type}</span></td>
-          ${teacherCell}
-          <td class="meta-cell">
-            ${formatDate(exam.available_from)}<br>
-            <span style="color: var(--dark-sky-blue);">→</span> ${formatDate(exam.available_until)}
+          <td>
+            <div style="font-weight:500;color:var(--nd-blue);margin-bottom:0.2rem;">${escapeHtml(exam.class_name)}</div>
+            <div style="font-size:0.78rem;color:var(--medium-blue);">${escapeHtml(exam.level_name)} · ${escapeHtml(exam.type)}</div>
           </td>
-          <td><span class="chip ${windowState}">${windowState === 'live' ? 'Live Now' : windowState}</span></td>
+          ${teacherCell}
+          <td>
+            <span class="chip ${windowState}" style="display:inline-block;margin-bottom:0.3rem;">${windowState === 'live' ? 'Live Now' : windowState}</span>
+            <div style="font-size:0.78rem;color:var(--medium-blue);">${formatDate(exam.available_from)}</div>
+            <div style="font-size:0.78rem;color:var(--medium-blue);opacity:0.75;">→ ${formatDate(exam.available_until)}</div>
+          </td>
           <td><span class="chip ${exam.status}">${exam.status}</span></td>
           <td>
             <div class="row-actions">
+              <a href="submissions.html?id=${exam.id}" class="row-btn">Submissions</a>
               <a href="edit-exam.html?id=${exam.id}" class="row-btn">Edit</a>
               ${isArchived
                 ? `<button class="row-btn unarchive" onclick="quickStatusChange('${exam.id}', 'active')">Restore</button>`

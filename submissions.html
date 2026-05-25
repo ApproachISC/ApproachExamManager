@@ -542,7 +542,6 @@
   <div class="brand-bar-right">
     <!--<a href="assessment-dashboard.html" class="nav-link">Assessments</a>-->
     <a href="dashboard.html" class="nav-link">Exams</a>
-    <a href="submissions.html" class="nav-link">Submissions</a>
     <div class="user-menu">
       <button class="user-menu-trigger" id="userMenuTrigger">
         <span class="user-info">
@@ -569,12 +568,16 @@
 </div>
 
 <div class="page" id="page" style="display: none;">
+  <div class="breadcrumb" id="breadcrumb" style="display:none;margin-bottom:1rem;">
+    <a href="dashboard.html">Exams</a> <span>›</span> <span id="bcExam">—</span> <span>›</span> Submissions
+  </div>
   <div class="page-header">
     <div>
       <div class="page-stamp">Exam Review</div>
       <h1 id="pageTitle">All <em>Submissions</em></h1>
       <p class="page-sub" id="pageSub">Review and grade student responses</p>
     </div>
+    <a href="dashboard.html" class="btn-secondary" id="backBtn" style="display:none;text-decoration:none;white-space:nowrap;">← Back to Exams</a>
   </div>
 
   <div class="stats-row">
@@ -640,7 +643,6 @@
       <thead>
         <tr>
           <th data-sort="student_name">Student <span class="sort-arrow">↕</span></th>
-          <th data-sort="exam_code">Exam <span class="sort-arrow">↕</span></th>
           <th data-sort="_class_name">Class <span class="sort-arrow">↕</span></th>
           <th data-sort="status">Status <span class="sort-arrow">↕</span></th>
           <th data-sort="submitted_at" class="sorted">Submitted <span class="sort-arrow">↓</span></th>
@@ -651,7 +653,7 @@
         </tr>
       </thead>
       <tbody id="submissionsBody">
-        <tr><td colspan="9"><div class="empty-state"><p>Loading submissions…</p></div></td></tr>
+        <tr><td colspan="8"><div class="empty-state"><p>Loading submissions…</p></div></td></tr>
       </tbody>
     </table>
   </div>
@@ -778,11 +780,19 @@
   // ===== LOAD DATA =====
   async function loadData() {
     try {
+      // If ?id= is present in the URL we're in single-exam mode, showing
+      // only submissions for that exam — like assessment-submissions.html.
+      const urlParams = new URLSearchParams(window.location.search);
+      const singleExamId = urlParams.get('id');
+
       const [examsRes, classesRes, submissionsRes] = await Promise.all([
         db.from('exams').select('id, code, class_id, level_id, teacher_id, type, year, quarter')
           .order('created_at', { ascending: false }),
         db.from('classes').select('id, name'),
-        db.from('submissions').select('*').order('submitted_at', { ascending: false, nullsFirst: false })
+        // If single-exam mode, only fetch that exam's submissions for speed
+        singleExamId
+          ? db.from('submissions').select('*').eq('exam_id', singleExamId).order('submitted_at', { ascending: false, nullsFirst: false })
+          : db.from('submissions').select('*').order('submitted_at', { ascending: false, nullsFirst: false })
       ]);
 
       if (examsRes.error) throw examsRes.error;
@@ -795,8 +805,6 @@
 
       // RLS allows all submissions to be read for now (broad dev policy);
       // we filter teacher submissions in the UI based on the visible exams.
-      // Since RLS already filters exams by role, we know which exam IDs are
-      // accessible. Anything outside that set, we drop.
       const visibleExamIds = new Set(allExams.map(e => e.id));
 
       // Cross-reference each submission with its exam + class
@@ -813,12 +821,32 @@
           };
         });
 
-      // Populate exam filter dropdown
-      filterExam.innerHTML = '<option value="">All exams</option>' +
-        allExams.map(e => {
-          const cls = allClasses.find(c => c.id === e.class_id);
-          return `<option value="${e.id}">${escapeHtml(e.code)} — ${escapeHtml(cls?.name || 'Unknown class')}</option>`;
-        }).join('');
+      // ── Single-exam mode ──────────────────────────────────────────────────
+      if (singleExamId) {
+        const exam = allExams.find(e => e.id === singleExamId);
+        const cls = exam ? allClasses.find(c => c.id === exam.class_id) : null;
+        const label = exam ? `${exam.code} — ${cls?.name || ''}` : singleExamId;
+
+        // Show breadcrumb and back button, hide the exam filter dropdown
+        document.getElementById('breadcrumb').style.display = 'block';
+        document.getElementById('bcExam').textContent = label;
+        document.getElementById('backBtn').style.display = 'inline-block';
+        document.getElementById('pageTitle').innerHTML = `${escapeHtml(cls?.name || '—')} · ${exam?.quarter || ''} ${exam?.year || ''} <em>Submissions</em>`;
+        document.getElementById('pageSub').textContent =
+          `${escapeHtml(exam?.code || '—')}`;
+
+        // Lock the exam filter to this exam and hide the dropdown row
+        filterExam.innerHTML = `<option value="${singleExamId}" selected>${escapeHtml(label)}</option>`;
+        filterExam.value = singleExamId;
+        filterExam.closest('.filter-field').style.display = 'none';
+      } else {
+        // ── All-exams mode (original behaviour) ────────────────────────────
+        filterExam.innerHTML = '<option value="">All exams</option>' +
+          allExams.map(e => {
+            const cls = allClasses.find(c => c.id === e.class_id);
+            return `<option value="${e.id}">${escapeHtml(e.code)} — ${escapeHtml(cls?.name || 'Unknown class')}</option>`;
+          }).join('');
+      }
 
       updateStats();
       renderTable();
@@ -828,7 +856,7 @@
     } catch (err) {
       console.error('Failed to load:', err);
       submissionsBody.innerHTML = `
-        <tr><td colspan="9"><div class="empty-state">
+        <tr><td colspan="8"><div class="empty-state">
           <h3>Could not load submissions</h3>
           <p>${escapeHtml(err.message || 'Check your connection.')}</p>
         </div></td></tr>`;
@@ -907,7 +935,7 @@
 
     if (subs.length === 0) {
       submissionsBody.innerHTML = `
-        <tr><td colspan="9"><div class="empty-state">
+        <tr><td colspan="8"><div class="empty-state">
           <div class="icon">⌗</div>
           <h3>No submissions found</h3>
           <p>${allSubmissions.length === 0 ? 'No students have started any exams yet.' : 'Try adjusting your filters.'}</p>
@@ -944,8 +972,10 @@
       return `
         <tr>
           <td class="student-cell">${escapeHtml(s.student_name)}</td>
-          <td><span class="code-cell">${escapeHtml(s.exam_code)}</span></td>
-          <td>${escapeHtml(s._class_name)}</td>
+          <td>
+            <div style="font-weight:500;color:var(--nd-blue);margin-bottom:0.2rem;">${escapeHtml(s._class_name)}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--medium-blue);">${escapeHtml(s.exam_code)}</div>
+          </td>
           <td>${statusChip}${flaggedChip}</td>
           <td class="meta-cell">${formatDate(s.submitted_at || s.started_at)}</td>
           <td class="meta-cell">${formatDuration(s.time_taken_seconds)}</td>
