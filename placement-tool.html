@@ -7,6 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
     :root {
       --navy: #1C2B4A;
@@ -180,6 +183,14 @@
       font-size: 12px;
     }
     .btn-export-row:hover { background: var(--gold); color: white; border-color: var(--gold); }
+
+    .btn-all-reports {
+      background: var(--gold);
+      color: white;
+      border: 1px solid var(--gold);
+    }
+    .btn-all-reports:hover { filter: brightness(0.88); }
+    .btn-all-reports:disabled { opacity: 0.6; cursor: not-allowed; filter: none; }
 
     .btn-delete {
       background: transparent;
@@ -402,6 +413,10 @@
       <button class="btn btn-secondary" id="exportXlsxBtn">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
         Export XLSX
+      </button>
+      <button class="btn btn-all-reports" id="downloadAllBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download All Reports
       </button>
       <button class="btn btn-primary" id="addStudentsBtn">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -916,6 +931,196 @@ function exportReport(idx) {
 }
 
 // ================================================================
+// EXPORT: BULK PDF ZIP
+// ================================================================
+
+function generateStudentPDF(student, teacherName) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+  const navy    = [28, 43, 74];
+  const gold    = [196, 146, 42];
+  const goldHl  = [255, 243, 192];
+  const white   = [255, 255, 255];
+  const border  = [221, 226, 235];
+  const pageW   = 297;
+  const margin  = 14;
+  const contentW = pageW - margin * 2;
+
+  function drawHeader() {
+    doc.setFillColor(...navy);
+    doc.rect(0, 0, pageW, 22, 'F');
+    doc.setFillColor(...gold);
+    doc.rect(0, 22, pageW, 1.2, 'F');
+
+    doc.setTextColor(...white);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('Spring 2026 Speaking and Writing Placement Rubric', pageW / 2, 10, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('Approach International Student Center', pageW / 2, 16.5, { align: 'center' });
+
+    doc.setTextColor(180, 190, 210);
+    doc.setFontSize(6.5);
+    doc.text('STUDENT', pageW - margin, 5.5, { align: 'right' });
+    doc.setTextColor(...white);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.text(student.name || '—', pageW - margin, 11, { align: 'right' });
+
+    doc.setTextColor(180, 190, 210);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.5);
+    doc.text('TEACHER', pageW - margin, 15.5, { align: 'right' });
+    doc.setTextColor(...white);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.text(teacherName || '—', pageW - margin, 21, { align: 'right' });
+  }
+
+  function drawSectionLabel(text, y) {
+    doc.setTextColor(...navy);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text(text, margin, y);
+    doc.setDrawColor(...gold);
+    doc.setLineWidth(0.6);
+    doc.line(margin, y + 1.5, margin + doc.getTextWidth(text), y + 1.5);
+  }
+
+  const tableBase = {
+    margin: { left: margin, right: margin },
+    styles: {
+      fontSize: 7,
+      cellPadding: { top: 2.5, right: 3, bottom: 2.5, left: 3 },
+      lineColor: border,
+      lineWidth: 0.3,
+      overflow: 'linebreak',
+      valign: 'top'
+    },
+    headStyles: {
+      fillColor: navy,
+      textColor: white,
+      fontStyle: 'bold',
+      fontSize: 7.5,
+      halign: 'left'
+    }
+  };
+
+  // ── Page 1: Speaking ──
+  drawHeader();
+  drawSectionLabel('Speaking Placement Rubric', 31);
+
+  const colW4 = (contentW - 14) / 4;
+  doc.autoTable({
+    ...tableBase,
+    head: [['Level', 'Range', 'Accuracy', 'Fluency', 'Coherence']],
+    body: SPEAKING_RUBRIC.map(r => [r.level, r.range, r.accuracy, r.fluency, r.coherence]),
+    startY: 35,
+    columnStyles: {
+      0: { cellWidth: 14, fontStyle: 'bold', halign: 'center' },
+      1: { cellWidth: colW4 }, 2: { cellWidth: colW4 },
+      3: { cellWidth: colW4 }, 4: { cellWidth: colW4 }
+    },
+    didParseCell: data => {
+      if (data.section === 'body' && SPEAKING_RUBRIC[data.row.index]?.level === student.speakingLevel) {
+        data.cell.styles.fillColor = goldHl;
+      }
+    }
+  });
+
+  // ── Page 2: Writing ──
+  doc.addPage();
+  drawHeader();
+  drawSectionLabel('Writing Placement Rubric', 31);
+
+  const colW5 = (contentW - 14) / 5;
+  doc.autoTable({
+    ...tableBase,
+    styles: { ...tableBase.styles, fontSize: 6.5 },
+    head: [['Level', 'Overall Written Production & Interaction', 'Linguistic Range', 'Grammatical Accuracy', 'Coherence', 'Orthographic Control']],
+    body: WRITING_RUBRIC.map(r => [r.level, r.overall, r.linguisticRange, r.grammaticalAccuracy, r.coherence, r.orthographic]),
+    startY: 35,
+    columnStyles: {
+      0: { cellWidth: 14, fontStyle: 'bold', halign: 'center' },
+      1: { cellWidth: colW5 }, 2: { cellWidth: colW5 },
+      3: { cellWidth: colW5 }, 4: { cellWidth: colW5 }, 5: { cellWidth: colW5 }
+    },
+    didParseCell: data => {
+      if (data.section === 'body' && WRITING_RUBRIC[data.row.index]?.level === student.writingLevel) {
+        data.cell.styles.fillColor = goldHl;
+      }
+    }
+  });
+
+  // Result box
+  const boxY  = doc.lastAutoTable.finalY + 10;
+  const boxW  = 110;
+  const boxX  = (pageW - boxW) / 2;
+  const rowH  = 11;
+
+  doc.setFillColor(...navy);
+  doc.rect(boxX, boxY, boxW, 10, 'F');
+  doc.setTextColor(...gold);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9.5);
+  doc.text('Placement Test Result', pageW / 2, boxY + 7, { align: 'center' });
+
+  [
+    { label: 'Writing CEFR level',   value: student.writingLevel  || '—' },
+    { label: 'Speaking CEFR level',  value: student.speakingLevel || '—' }
+  ].forEach((row, i) => {
+    const y = boxY + 10 + i * rowH;
+    doc.setFillColor(...white);
+    doc.setDrawColor(...border);
+    doc.setLineWidth(0.3);
+    doc.rect(boxX, y, boxW, rowH, 'FD');
+    doc.setTextColor(...navy);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.text(row.label, boxX + 5, y + 7.5);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...gold);
+    doc.setFontSize(10);
+    doc.text(row.value, boxX + boxW - 5, y + 7.5, { align: 'right' });
+  });
+
+  doc.setDrawColor(...navy);
+  doc.setLineWidth(0.5);
+  doc.rect(boxX, boxY, boxW, 10 + rowH * 2, 'S');
+
+  return doc;
+}
+
+async function downloadAllReports() {
+  if (state.students.length === 0) { showToast('No students to export'); return; }
+
+  const btn = document.getElementById('downloadAllBtn');
+  const origHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Generating…`;
+
+  try {
+    const zip = new JSZip();
+    for (const student of state.students) {
+      const doc = generateStudentPDF(student, state.teacherName);
+      const safeName = student.name.replace(/\s+/g, '');
+      zip.file(`${safeName}_Writing&SpeakingRubric.pdf`, doc.output('arraybuffer'));
+    }
+    const blob = await zip.generateAsync({ type: 'blob' });
+    downloadBlob(blob, 'PlacementReports_Spring2026.zip');
+    showToast(`${state.students.length} report${state.students.length !== 1 ? 's' : ''} downloaded`);
+  } catch (e) {
+    showToast('Error generating reports — try again');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origHTML;
+  }
+}
+
+// ================================================================
 // EXPORT: CSV & XLSX
 // ================================================================
 
@@ -1026,6 +1231,7 @@ document.addEventListener('keydown', e => {
 
 document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
 document.getElementById('exportXlsxBtn').addEventListener('click', exportXLSX);
+document.getElementById('downloadAllBtn').addEventListener('click', downloadAllReports);
 
 render();
 </script>
