@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spring 2026 Placement Tool — Approach International Student Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --navy: #1C2B4A;
+      --navy-mid: #2E4170;
+      --gold: #C4922A;
+      --gold-light: #F5E9D0;
+      --white: #FFFFFF;
+      --surface: #F7F8FA;
+      --surface-alt: #EDEEF2;
+      --border: #DDE2EB;
+      --text: #1C2B4A;
+      --text-muted: #6B7280;
+      --danger: #DC2626;
+      --danger-bg: #FEF2F2;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    .header {
+      background: var(--navy);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(28,43,74,0.25);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(196,146,42,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .header-titles { line-height: 1; }
+    .header-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.01em;
+    }
+    .header-subtitle {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 400;
+      margin-top: 3px;
+    }
+
+    .teacher-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .teacher-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      white-space: nowrap;
+    }
+    .teacher-input {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 13px;
+      border-radius: 7px;
+      font-size: 13.5px;
+      font-family: inherit;
+      font-weight: 500;
+      width: 240px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .teacher-input::placeholder { color: rgba(255,255,255,0.3); font-weight: 400; }
+    .teacher-input:focus {
+      outline: none;
+      background: rgba(255,255,255,0.15);
+      border-color: var(--gold);
+    }
+
+    /* ── MAIN ───────────────────────────────────────────── */
+    .main {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    .action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .action-left { display: flex; align-items: center; gap: 10px; }
+    .action-right { display: flex; align-items: center; gap: 8px; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .count-badge {
+      background: var(--navy);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    /* ── BUTTONS ────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 15px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .btn-primary { background: var(--navy); color: white; }
+    .btn-primary:hover { background: var(--navy-mid); }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--surface-alt); }
+
+    .btn-export-row {
+      background: var(--gold-light);
+      color: var(--navy);
+      border: 1px solid rgba(196,146,42,0.35);
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .btn-export-row:hover { background: var(--gold); color: white; border-color: var(--gold); }
+
+    .btn-delete {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn-delete:hover { background: var(--danger-bg); color: var(--danger); }
+
+    /* ── TABLE ──────────────────────────────────────────── */
+    .table-card {
+      background: white;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(28,43,74,0.06);
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead th {
+      background: var(--navy);
+      color: white;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 11px 16px;
+      text-align: left;
+    }
+
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #FAFBFD; }
+
+    tbody td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
+
+    .student-name-cell { font-weight: 600; color: var(--text); }
+
+    .level-select {
+      appearance: none;
+      background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 9px center;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 30px 6px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      min-width: 105px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .level-select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(196,146,42,0.15);
+    }
+
+    .actions-cell { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+
+    /* ── EMPTY STATE ────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 72px 32px;
+      color: var(--text-muted);
+    }
+    .empty-icon { margin-bottom: 14px; opacity: 0.35; }
+    .empty-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .empty-text { font-size: 13px; line-height: 1.55; }
+
+    /* ── MODAL ──────────────────────────────────────────── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 18, 35, 0.55);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: white;
+      border-radius: 14px;
+      padding: 28px;
+      width: 460px;
+      max-width: calc(100vw - 40px);
+      box-shadow: 0 24px 80px rgba(10,18,35,0.28);
+      transform: translateY(10px) scale(0.99);
+      transition: transform 0.2s;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .modal-title { font-size: 17px; font-weight: 700; }
+    .modal-subtitle { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
+
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      margin-top: -2px;
+      transition: all 0.15s;
+    }
+    .modal-close:hover { color: var(--text); background: var(--surface-alt); }
+
+    .modal-textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13.5px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 150px;
+      color: var(--text);
+      line-height: 1.7;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .modal-textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(196,146,42,0.15);
+    }
+
+    .modal-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    /* ── TOAST ──────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--navy);
+      color: white;
+      padding: 11px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+      transform: translateY(12px);
+      opacity: 0;
+      transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 200;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    .gold-rule {
+      height: 3px;
+      background: var(--gold);
+      border: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo-mark">
+      <svg width="22" height="22" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 4 L30 28 H24 L21 21 H15 L12 28 H6 L18 4Z" fill="white"/>
+        <path d="M16 17 L18 11 L20 17Z" fill="#C4922A"/>
+      </svg>
+    </div>
+    <div class="header-titles">
+      <div class="header-title">Placement Level Tool</div>
+      <div class="header-subtitle">Spring 2026 · Approach International Student Center</div>
+    </div>
+  </div>
+  <div class="teacher-field">
+    <label class="teacher-label" for="teacherName">Teacher</label>
+    <input id="teacherName" class="teacher-input" type="text" placeholder="Enter teacher name" autocomplete="off">
+  </div>
+</header>
+<hr class="gold-rule">
+
+<!-- ── MAIN ────────────────────────────────────────────────── -->
+<main class="main">
+  <div class="action-bar">
+    <div class="action-left">
+      <span class="section-label">Students</span>
+      <span class="count-badge" id="countBadge">0</span>
+    </div>
+    <div class="action-right">
+      <button class="btn btn-secondary" id="exportCsvBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Export CSV
+      </button>
+      <button class="btn btn-secondary" id="exportXlsxBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        Export XLSX
+      </button>
+      <button class="btn btn-primary" id="addStudentsBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Students
+      </button>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table id="studentsTable">
+      <thead>
+        <tr>
+          <th style="width: 36%">Student Name</th>
+          <th style="width: 20%">Speaking Level</th>
+          <th style="width: 20%">Writing Level</th>
+          <th style="width: 24%; text-align: right">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="studentsTableBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ── MODAL ────────────────────────────────────────────────── -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Add Students</div>
+        <div class="modal-subtitle">One student name per line</div>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <textarea id="studentNamesInput" class="modal-textarea" placeholder="Maria Santos&#10;Ahmed Al-Rashid&#10;Yuki Tanaka&#10;..."></textarea>
+    <p class="modal-hint">Names will be appended to the existing list. Blank lines are ignored.</p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+      <button class="btn btn-primary" id="modalAdd">Add Students</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────────────────── -->
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<script>
+// ================================================================
+// RUBRIC DATA
+// ================================================================
+
+const LEVELS = ['Pre A1', 'A1', 'A2', 'A2+', 'B1', 'B1+', 'B2', 'B2+', 'C1', 'C2'];
+
+const SPEAKING_RUBRIC = [
+  {
+    level: 'Pre A1',
+    range: `Has an extremely limited repertoire of isolated words and fixed phrases related to personal details (e.g. name, numbers) and immediate concrete needs. Cannot yet form sentences independently.`,
+    accuracy: `Shows no productive control of grammatical structures. May reproduce a few memorized words or symbols but cannot apply any grammatical rules.`,
+    fluency: `Cannot produce written language independently. May copy words or symbols but cannot generate original written output, even minimally.`,
+    coherence: `Unable to connect words or ideas in writing. Produces only isolated words or copies, with no linear or logical connection between elements.`
+  },
+  {
+    level: 'A1',
+    range: `Has a very basic repertoire of words and simple phrases related to personal details and particular concrete situations.`,
+    accuracy: `Shows only limited control of a few simple grammatical structures and sentence patterns in a memorised repertoire.`,
+    fluency: `Can manage very short, isolated, mainly pre-packaged utterances, with much pausing to search for expressions, to articulate less familiar words, and to repair communication.`,
+    coherence: `Can link words or groups of words with very basic linear connectors like "and" or "then".`
+  },
+  {
+    level: 'A2',
+    range: `Uses basic sentence patterns with memorized phrases, groups of a few words and formulae in order to communicate limited information in simple everyday situations.`,
+    accuracy: `Uses some simple structures correctly, but still systematically makes basic mistakes.`,
+    fluency: `Can make him/herself understood in very short utterances, even though pauses, false starts and reformulation are very evident.`,
+    coherence: `Can link groups of words with simple connectors like "and", "but" and "because".`
+  },
+  {
+    level: 'A2+',
+    range: `Has a slightly expanded repertoire beyond A2, capable of using familiar expressions in a wider range of everyday situations, though still relies on basic sentence patterns and formulaic language.`,
+    accuracy: `Uses simple structures with somewhat more consistency than A2, but still makes frequent basic mistakes, particularly with verb tenses, agreement, and word order.`,
+    fluency: `Can produce short stretches of written text on familiar topics with some effort, but false starts and reformulations remain common.`,
+    coherence: `Can link sentences and short paragraphs using basic connectors with growing, though still inconsistent, use of sequencing words like "first" or "then".`
+  },
+  {
+    level: 'B1',
+    range: `Has enough language to get by, with sufficient vocabulary to express him/herself with some hesitation and circumlocutions on topics such as family, hobbies and interests, work, travel, and current events.`,
+    accuracy: `Uses reasonably accurately a repertoire of frequently used "routines" and patterns associated with more predictable situations.`,
+    fluency: `Can keep going comprehensibly, even though pausing for grammatical and lexical planning. Repair is very evident, especially in longer stretches of free production.`,
+    coherence: `Can link a series of shorter, discrete simple elements into a connected, linear sequence of points.`
+  },
+  {
+    level: 'B1+',
+    range: `Has a sufficiently broad range of vocabulary and expressions to handle most familiar topics with reasonable precision. Beginning to use some less common vocabulary, though with some inconsistency.`,
+    accuracy: `Generally maintains grammatical accuracy in familiar contexts, though noticeable errors persist in more complex structures. Errors rarely impede communication.`,
+    fluency: `Can write with reasonable fluency on familiar topics, though some pausing for planning or revision is still evident. Produces coherent multi-sentence responses without major breakdowns.`,
+    coherence: `Can organise writing clearly with a basic introduction, development, and conclusion. Uses a range of cohesive devices, though not always with full accuracy or sophistication.`
+  },
+  {
+    level: 'B2',
+    range: `Has a sufficient range of language to be able to give clear descriptions, express viewpoints on most general topics, without much conspicuous searching for words, using some complex sentence forms to do so.`,
+    accuracy: `Shows a relatively high degree of grammatical control. Does not make errors which cause misunderstanding, and can correct most of his/her mistakes.`,
+    fluency: `Can produce stretches of language with a fairly even tempo, although he/she can be hesitant as he or she searches for patterns and expressions. There are few noticeably long pauses.`,
+    coherence: `Can use a limited number of cohesive devices to link his/her utterances into clear, coherent discourse, though there may be some "jumpiness" in a long contribution.`
+  },
+  {
+    level: 'B2+',
+    range: `Commands a broad range of vocabulary including less common and idiomatic expressions. Can express ideas with precision and nuance on a wide range of topics, with only occasional imprecision.`,
+    accuracy: `Maintains a high degree of grammatical accuracy across most contexts. Errors are infrequent and typically non-systematic; they are often self-corrected.`,
+    fluency: `Can write at length with a steady, even tempo on a wide range of topics, with little evidence of searching for words or structures. The writing flows naturally with minimal disruption.`,
+    coherence: `Makes effective use of a varied range of cohesive devices. Writing is clearly structured, with well-developed paragraphs and smooth transitions between ideas.`
+  },
+  {
+    level: 'C1',
+    range: `Has a good command of a broad range of language allowing him/her to select a formulation to express him/herself clearly in an appropriate style on a wide range of topics without having to restrict what he/she wants to say.`,
+    accuracy: `Consistently maintains a high degree of grammatical accuracy; errors are rare, difficult to spot and generally corrected when they do occur.`,
+    fluency: `Can express him/herself fluently and spontaneously, almost effortlessly. Only a conceptually difficult subject can hinder a natural, smooth flow of language.`,
+    coherence: `Can produce clear, smoothly flowing, well-structured speech, showing controlled use of organisational patterns, connectors and cohesive devices.`
+  },
+  {
+    level: 'C2',
+    range: `Shows great flexibility reformulating ideas in differing linguistic forms to convey finer shades of meaning precisely, to give emphasis, to differentiate and to eliminate ambiguity. Also has a good command of idiomatic expressions and colloquialisms.`,
+    accuracy: `Maintains consistent grammatical control of complex language, even while attention is otherwise engaged (e.g. in forward planning, in monitoring others' reactions).`,
+    fluency: `Can express him/herself spontaneously at length with a natural colloquial flow, avoiding or backtracking around any difficulty so smoothly that the interlocutor is hardly aware of it.`,
+    coherence: `Can create coherent and cohesive discourse making full and appropriate use of a variety of organisational patterns and a wide range of connectors and other cohesive devices.`
+  }
+];
+
+const WRITING_RUBRIC = [
+  {
+    level: 'Pre A1',
+    overall: `Cannot yet produce written sentences independently. May write isolated familiar words (e.g. name) or copy simple words but is unable to communicate information in writing.`,
+    linguisticRange: `Has an extremely limited range, restricted to a few memorized words or personal information. Cannot form original sentences.`,
+    grammaticalAccuracy: `Shows no productive grammatical control. May reproduce isolated memorized words but cannot apply grammatical rules.`,
+    coherence: `Unable to connect words or ideas. Produces only isolated items with no linking or organizational structure.`,
+    orthographic: `Can only copy familiar words or write personal details such as name and address. Cannot independently produce other written forms.`
+  },
+  {
+    level: 'A1',
+    overall: `Can write simple isolated phrases and sentences. Can ask for or pass on personal details in written form.`,
+    linguisticRange: `Has a very basic range of simple expressions about personal details and needs of a concrete type.`,
+    grammaticalAccuracy: `Shows only limited control of a few simple grammatical structures and sentence patterns in a learned repertoire.`,
+    coherence: `Can link words/groups of words with very basic linear connectors like 'and' or 'then'.`,
+    orthographic: `Can copy familiar words and short phrases. Can spell his/her address, nationality, etc.`
+  },
+  {
+    level: 'A2',
+    overall: `Can write a series of simple phrases and sentences linked with simple connectors like "and", "but" and "because". Can write short, simple formulaic notes relating to matters in areas of immediate need.`,
+    linguisticRange: `Has a repertoire of basic language and can produce brief everyday expressions to deal with everyday situations with predictable content: personal details, daily routines, wants and needs, and requests for information.`,
+    grammaticalAccuracy: `Uses some simple structures correctly, but still systematically makes basic mistakes — tends to mix up tenses and forgets to mark agreement; nevertheless, it is usually clear what he/she is trying to say.`,
+    coherence: `Can use the most frequently occurring connectors to link simple sentences in order to tell a story or describe something as a simple list of points.`,
+    orthographic: `Can copy short sentences on everyday subjects. Can write with reasonable phonetic accuracy short words that are in his/her oral vocabulary.`
+  },
+  {
+    level: 'A2+',
+    overall: `Can write short, connected texts on familiar everyday topics. Can communicate basic information in informal messages, notes, and simple descriptions, going slightly beyond formulaic language.`,
+    linguisticRange: `Has a somewhat expanded basic vocabulary for communication on a wider range of everyday situations, though still relies on common expressions and high-frequency vocabulary.`,
+    grammaticalAccuracy: `Uses common structures with growing consistency, though frequent errors persist. Mother tongue influence is noticeable but does not generally impede understanding.`,
+    coherence: `Can link sentences using common connectors to create short, basic paragraph-level writing, though structure may lack consistency.`,
+    orthographic: `Can produce short continuous writing that is generally legible. Spelling of common words is mostly accurate; less common words may be phonetically approximated.`
+  },
+  {
+    level: 'B1',
+    overall: `Can write straightforward connected texts on a range of familiar subjects. Can convey information and ideas on abstract as well as concrete topics, check information, and ask about or explain problems with reasonable precision.`,
+    linguisticRange: `Has enough language to get by, with sufficient vocabulary to express him/herself with some circumlocutions on topics such as family, hobbies, work, travel, and current events.`,
+    grammaticalAccuracy: `Communicates with reasonable accuracy in familiar contexts; generally good control though with noticeable mother tongue influence. Errors occur, but it is clear what he/she is trying to express.`,
+    coherence: `Can link a series of shorter, discrete simple elements into a connected, linear sequence of points.`,
+    orthographic: `Can produce continuous writing which is generally intelligible throughout. Spelling, punctuation, and layout are accurate enough to be followed most of the time.`
+  },
+  {
+    level: 'B1+',
+    overall: `Can write clear texts on a variety of familiar and some less familiar topics. Can express and briefly justify opinions, describe experiences, and convey information with a degree of detail beyond B1.`,
+    linguisticRange: `Has a sufficiently broad vocabulary to write about a variety of topics with reasonable precision. Can paraphrase effectively when lacking specific vocabulary.`,
+    grammaticalAccuracy: `Generally good grammatical control in familiar writing tasks; errors occur in more complex structures but rarely affect comprehension. Self-correction is increasingly evident.`,
+    coherence: `Can organise ideas into reasonably well-structured paragraphs with an identifiable introduction and conclusion. Uses a range of linking devices, though not always with full accuracy.`,
+    orthographic: `Produces writing that is clear and legible throughout. Spelling and punctuation are generally accurate, with occasional errors in less common words.`
+  },
+  {
+    level: 'B2',
+    overall: `Can write clear, detailed texts on a variety of subjects, synthesizing and evaluating information and arguments from a number of sources. Can express news and views effectively in writing.`,
+    linguisticRange: `Has a sufficient range of language to give clear descriptions, express viewpoints, and develop arguments without much sign of having to restrict what he/she wants to say, using some complex sentence forms.`,
+    grammaticalAccuracy: `Shows a relatively high degree of grammatical control. Does not make mistakes that lead to misunderstanding. Occasional slips may still occur but are rare and can often be corrected.`,
+    coherence: `Can use a variety of linking words efficiently to mark clearly the relationships between ideas. There may be some "jumpiness" in a long contribution.`,
+    orthographic: `Can produce clearly intelligible continuous writing following standard layout and paragraphing conventions. Spelling and punctuation are reasonably accurate.`
+  },
+  {
+    level: 'B2+',
+    overall: `Can write well-structured, detailed texts on complex subjects with clarity and appropriate style. Can synthesise and evaluate information from multiple sources with confidence.`,
+    linguisticRange: `Commands a broad vocabulary range and can express ideas with precision on a wide range of topics. Rarely needs to restrict content due to linguistic limitations.`,
+    grammaticalAccuracy: `Maintains a high degree of grammatical accuracy across a range of complex structures. Non-systematic errors occur rarely and are typically self-corrected.`,
+    coherence: `Produces clearly organised writing with well-developed paragraphs, effective use of topic sentences, and smooth transitions. A wide range of cohesive devices is used accurately.`,
+    orthographic: `Writing is consistently clear, well-laid-out, and adherent to conventions. Spelling is accurate, with only very occasional lapses.`
+  },
+  {
+    level: 'C1',
+    overall: `Can write clear, well-structured texts on complex subjects, expanding and supporting points of view with subsidiary points, reasons, and relevant examples, and rounding off with an appropriate conclusion.`,
+    linguisticRange: `Can select an appropriate formulation from a broad range of language to express him/herself clearly, without having to restrict what he/she wants to say.`,
+    grammaticalAccuracy: `Consistently maintains a high degree of grammatical accuracy; errors are rare and difficult to spot.`,
+    coherence: `Can produce clear, smoothly flowing, well-structured writing, showing controlled use of organizational patterns, connectors, and cohesive devices.`,
+    orthographic: `Layout, paragraphing, and punctuation are consistent and helpful. Spelling is accurate, apart from occasional slips of the pen.`
+  },
+  {
+    level: 'C2',
+    overall: `Can write clear, smoothly flowing, complex texts in an appropriate and effective style with a logical structure which helps the reader to find significant points.`,
+    linguisticRange: `Can exploit a comprehensive and reliable mastery of a very wide range of language to formulate thoughts precisely, give emphasis, differentiate, and eliminate ambiguity.`,
+    grammaticalAccuracy: `Maintains consistent grammatical control of complex language, even while attention is otherwise engaged.`,
+    coherence: `Can create coherent and cohesive text making full and appropriate use of a variety of organisational patterns and a wide range of cohesive devices.`,
+    orthographic: `Writing is orthographically free of error.`
+  }
+];
+
+// ================================================================
+// STATE & PERSISTENCE
+// ================================================================
+
+const STORAGE_KEY = 'approach_placement_spring2026';
+
+let state = {
+  teacherName: '',
+  students: []
+};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      state = { ...state, ...parsed };
+    }
+  } catch (e) { /* ignore */ }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) { /* ignore */ }
+}
+
+// ================================================================
+// UTILITIES
+// ================================================================
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+// ================================================================
+// RENDER
+// ================================================================
+
+function render() {
+  const tbody = document.getElementById('studentsTableBody');
+  const badge = document.getElementById('countBadge');
+  badge.textContent = state.students.length;
+
+  if (state.students.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4">
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="empty-title">No students yet</div>
+            <div class="empty-text">Click "Add Students" to begin assigning placement levels.</div>
+          </div>
+        </td>
+      </tr>`;
+    return;
+  }
+
+  tbody.innerHTML = state.students.map((student, idx) => {
+    const speakingOpts = LEVELS.map(l =>
+      `<option value="${esc(l)}" ${student.speakingLevel === l ? 'selected' : ''}>${esc(l)}</option>`
+    ).join('');
+    const writingOpts = LEVELS.map(l =>
+      `<option value="${esc(l)}" ${student.writingLevel === l ? 'selected' : ''}>${esc(l)}</option>`
+    ).join('');
+
+    return `<tr>
+      <td class="student-name-cell">${esc(student.name)}</td>
+      <td>
+        <select class="level-select" onchange="updateLevel(${idx}, 'speaking', this.value)">
+          ${speakingOpts}
+        </select>
+      </td>
+      <td>
+        <select class="level-select" onchange="updateLevel(${idx}, 'writing', this.value)">
+          ${writingOpts}
+        </select>
+      </td>
+      <td>
+        <div class="actions-cell">
+          <button class="btn btn-export-row" onclick="exportReport(${idx})">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Report
+          </button>
+          <button class="btn-delete" onclick="deleteStudent(${idx})" title="Remove student">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ================================================================
+// STUDENT ACTIONS
+// ================================================================
+
+function updateLevel(idx, type, value) {
+  if (type === 'speaking') {
+    state.students[idx].speakingLevel = value;
+  } else {
+    state.students[idx].writingLevel = value;
+  }
+  saveState();
+}
+
+function deleteStudent(idx) {
+  const name = state.students[idx].name;
+  state.students.splice(idx, 1);
+  saveState();
+  render();
+  showToast(`Removed "${name}"`);
+}
+
+function addStudents(text) {
+  const names = text.split('\n').map(n => n.trim()).filter(Boolean);
+  const newStudents = names.map(name => ({
+    id: uid(),
+    name,
+    speakingLevel: 'A2',
+    writingLevel: 'A2'
+  }));
+  state.students.push(...newStudents);
+  saveState();
+  render();
+  return newStudents.length;
+}
+
+// ================================================================
+// EXPORT: PER-STUDENT REPORT
+// ================================================================
+
+function buildReportHTML(student, teacherName) {
+  const LOGO_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEn2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDI1LTAxLTAyPC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkV4dElkPjk1MzNjYzNmLTIyM2YtNDNjYi05ZDVkLTllN2QwNjI0ODgxMjwvQXR0cmliOkV4dElkPgogICAgIDxBdHRyaWI6RmJJZD41MjUyNjU5MTQxNzk1ODA8L0F0dHJpYjpGYklkPgogICAgIDxBdHRyaWI6VG91Y2hUeXBlPjI8L0F0dHJpYjpUb3VjaFR5cGU+CiAgICA8L3JkZjpsaT4KICAgPC9yZGY6U2VxPgogIDwvQXR0cmliOkFkcz4KIDwvcmRmOkRlc2NyaXB0aW9uPgoKIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PScnCiAgeG1sbnM6ZGM9J2h0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvJz4KICA8ZGM6dGl0bGU+CiAgIDxyZGY6QWx0PgogICAgPHJkZjpsaSB4bWw6bGFuZz0neC1kZWZhdWx0Jz4yMDI0IEFQUFJPQUNIIExPR09TICAtIDE8L3JkZjpsaT4KICAgPC9yZGY6QWx0PgogIDwvZGM6dGl0bGU+CiA8L3JkZjpEZXNjcmlwdGlvbj4KCiA8cmRmOkRlc2Ny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';
+
+  const pad  = 'padding:5px 7px;';
+  const bdr  = 'border:1px solid #DDE2EB;';
+  const fs   = 'font-size:9px;line-height:1.45;';
+  const pcol = '-webkit-print-color-adjust:exact;print-color-adjust:exact;';
+
+  const speakingRows = SPEAKING_RUBRIC.map(row => {
+    const hl = row.level === student.speakingLevel;
+    const bg = hl ? `background-color:#FFF3C0;${pcol}` : '';
+    const lb = hl ? 'border-left:4px solid #C4922A;' : 'border-left:4px solid transparent;';
+    return `<tr>
+      <td style="font-weight:700;white-space:nowrap;${pad}${bdr}${bg}${lb}">${esc(row.level)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.range)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.accuracy)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.fluency)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.coherence)}</td>
+    </tr>`;
+  }).join('');
+
+  const writingRows = WRITING_RUBRIC.map(row => {
+    const hl = row.level === student.writingLevel;
+    const bg = hl ? `background-color:#FFF3C0;${pcol}` : '';
+    const lb = hl ? 'border-left:4px solid #C4922A;' : 'border-left:4px solid transparent;';
+    return `<tr>
+      <td style="font-weight:700;white-space:nowrap;${pad}${bdr}${bg}${lb}">${esc(row.level)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.overall)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.linguisticRange)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.grammaticalAccuracy)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.coherence)}</td>
+      <td style="${pad}${bdr}${fs}${bg}">${esc(row.orthographic)}</td>
+    </tr>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Placement Report — ${esc(student.name)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+@page{size:A4 landscape;margin:1.1cm;}
+body{font-family:'Inter',Arial,sans-serif;color:#1C2B4A;background:white;padding:16px 22px;font-size:12px;}
+.rpt-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:9px;border-bottom:3px solid #C4922A;margin-bottom:10px;}
+.rpt-logo{display:flex;align-items:center;gap:10px;}
+.rpt-logo img{width:52px;height:52px;display:block;}
+.rpt-logo-text{font-size:9.5px;font-weight:700;color:#1C2B4A;line-height:1.5;text-transform:uppercase;letter-spacing:0.04em;}
+.rpt-main-title{font-size:15px;font-weight:700;color:#1C2B4A;text-align:center;flex:1;padding:0 16px;}
+.rpt-meta-side{text-align:right;min-width:130px;}
+.rpt-meta-side .meta-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6B7280;display:block;margin-bottom:2px;}
+.rpt-meta-side .meta-val{font-size:11.5px;font-weight:700;color:#1C2B4A;display:block;margin-bottom:6px;}
+.rpt-instruction{font-size:9px;color:#6B7280;font-style:italic;margin-bottom:7px;}
+.section-head{font-size:11px;font-weight:700;color:#1C2B4A;padding-bottom:4px;border-bottom:2px solid #C4922A;margin-bottom:5px;}
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+thead th{background-color:#1C2B4A;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:white;padding:6px 7px;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;text-align:left;border:1px solid #1C2B4A;word-wrap:break-word;}
+.page2{page-break-before:always;padding-top:0;}
+.result-box{margin-top:14px;border:2px solid #1C2B4A;border-radius:6px;overflow:hidden;max-width:340px;}
+.result-box-hdr{background-color:#1C2B4A;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#C4922A;font-weight:700;font-size:11.5px;padding:8px 14px;text-align:center;letter-spacing:0.04em;}
+.result-row{display:flex;border-bottom:1px solid #DDE2EB;}
+.result-row:last-child{border-bottom:none;}
+.result-lbl{font-weight:600;font-size:11.5px;padding:9px 14px;flex:1;color:#1C2B4A;}
+.result-val{font-weight:700;font-size:13px;padding:9px 14px;width:90px;text-align:center;color:#C4922A;border-left:1px solid #DDE2EB;}
+.print-btn{position:fixed;bottom:22px;right:22px;background:#1C2B4A;color:white;border:none;padding:11px 20px;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 18px rgba(0,0,0,0.18);transition:background 0.15s;}
+.print-btn:hover{background:#2E4170;}
+@media print{.print-btn{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="rpt-header">
+  <div class="rpt-logo">
+    <img src="data:image/jpeg;base64,${LOGO_B64}" alt="Approach International Student Center logo">
+    <div class="rpt-logo-text">Approach<br>International<br>Student Center</div>
+  </div>
+  <div class="rpt-main-title">Spring 2026 Speaking and Writing Placement Rubric</div>
+  <div class="rpt-meta-side">
+    <span class="meta-label">Student Name</span>
+    <span class="meta-val">${esc(student.name)}</span>
+    <span class="meta-label">Teacher Name</span>
+    <span class="meta-val">${esc(teacherName) || '—'}</span>
+  </div>
+</div>
+
+<p class="rpt-instruction">Highlight the row that best represents the student's proficiency level.</p>
+
+<div class="section-head">Speaking Placement Rubric</div>
+<table>
+  <colgroup>
+    <col style="width:6%"><col style="width:24%"><col style="width:23.5%"><col style="width:23.5%"><col style="width:23%">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Level</th><th>Range</th><th>Accuracy</th><th>Fluency</th><th>Coherence</th>
+    </tr>
+  </thead>
+  <tbody>${speakingRows}</tbody>
+</table>
+
+<!-- PAGE 2 -->
+<div class="page2">
+  <div class="section-head">Writing Placement Rubric</div>
+  <table>
+    <colgroup>
+      <col style="width:5.5%"><col style="width:18.9%"><col style="width:18.9%"><col style="width:18.9%"><col style="width:18.9%"><col style="width:18.9%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Level</th>
+        <th>Overall Written Production &amp; Interaction</th>
+        <th>Linguistic Range</th>
+        <th>Grammatical Accuracy</th>
+        <th>Coherence</th>
+        <th>Orthographic Control</th>
+      </tr>
+    </thead>
+    <tbody>${writingRows}</tbody>
+  </table>
+
+  <div class="result-box">
+    <div class="result-box-hdr">Placement Test Result</div>
+    <div class="result-row">
+      <span class="result-lbl">Writing CEFR level</span>
+      <span class="result-val">${esc(student.writingLevel)}</span>
+    </div>
+    <div class="result-row">
+      <span class="result-lbl">Speaking CEFR level</span>
+      <span class="result-val">${esc(student.speakingLevel)}</span>
+    </div>
+  </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+  Print / Save as PDF
+</button>
+</body>
+</html>`;
+}
+
+
+function exportReport(idx) {
+  const student = state.students[idx];
+  const html = buildReportHTML(student, state.teacherName);
+  const win = window.open('', '_blank');
+  if (!win) {
+    showToast('Allow pop-ups to export reports');
+    return;
+  }
+  win.document.write(html);
+  win.document.close();
+}
+
+// ================================================================
+// EXPORT: CSV & XLSX
+// ================================================================
+
+function exportCSV() {
+  if (state.students.length === 0) { showToast('No students to export'); return; }
+  const header = ['Student Name', 'Speaking Level', 'Writing Level'];
+  const rows = state.students.map(s => [s.name, s.speakingLevel, s.writingLevel]);
+  const csv = [header, ...rows]
+    .map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
+    .join('\r\n');
+  downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Spring2026_Placement_Results.csv');
+  showToast('CSV exported');
+}
+
+function exportXLSX() {
+  if (state.students.length === 0) { showToast('No students to export'); return; }
+  const data = [
+    ['Student Name', 'Speaking Level', 'Writing Level'],
+    ...state.students.map(s => [s.name, s.speakingLevel, s.writingLevel])
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  // Column widths
+  ws['!cols'] = [{ wch: 36 }, { wch: 18 }, { wch: 18 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Placement Results');
+  XLSX.writeFile(wb, 'Spring2026_Placement_Results.xlsx');
+  showToast('XLSX exported');
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// ================================================================
+// MODAL
+// ================================================================
+
+function openModal() {
+  document.getElementById('modalBackdrop').classList.add('open');
+  setTimeout(() => document.getElementById('studentNamesInput').focus(), 80);
+}
+
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('open');
+  document.getElementById('studentNamesInput').value = '';
+}
+
+// ================================================================
+// TOAST
+// ================================================================
+
+let toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+// ================================================================
+// INIT
+// ================================================================
+
+loadState();
+
+// Teacher name
+const teacherInput = document.getElementById('teacherName');
+teacherInput.value = state.teacherName;
+teacherInput.addEventListener('input', e => {
+  state.teacherName = e.target.value.trim();
+  saveState();
+});
+
+// Buttons
+document.getElementById('addStudentsBtn').addEventListener('click', openModal);
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+document.getElementById('modalBackdrop').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+document.getElementById('modalAdd').addEventListener('click', () => {
+  const text = document.getElementById('studentNamesInput').value;
+  const count = addStudents(text);
+  closeModal();
+  if (count > 0) {
+    showToast(`${count} student${count !== 1 ? 's' : ''} added`);
+  } else {
+    showToast('No names found — enter one per line');
+  }
+});
+
+// Keyboard: Escape closes modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Enter' && e.ctrlKey && document.getElementById('modalBackdrop').classList.contains('open')) {
+    document.getElementById('modalAdd').click();
+  }
+});
+
+document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+document.getElementById('exportXlsxBtn').addEventListener('click', exportXLSX);
+
+render();
+</script>
+</body>
+</html>
