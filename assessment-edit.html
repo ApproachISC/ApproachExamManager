@@ -25,7 +25,7 @@
           <span id="userRole"></span>
         </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ae9142" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-icon lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        <span style="font-size: 0.9em;">▼</span>
+        <span class="menu-caret">▼</span>
       </button>
       <div class="user-menu-dropdown" id="userMenuDropdown">
         <a href="qr-generator.html" target="_blank">QR Code Generator ➚</a>
@@ -40,13 +40,13 @@
 
 <div class="auth-loading" id="authLoading">
   <div class="spinner"></div>
-  <p style="font-family: var(--font-display); font-style: italic;">Loading assessment…</p>
+  <p>Loading assessment…</p>
 </div>
 
 <div class="error-screen" id="errorScreen" style="display: none;">
   <h2 id="errorTitle">—</h2>
-  <p id="errorMessage" style="font-family: var(--font-display); font-style: italic; font-size: 1.05rem;">—</p>
-  <a href="dashboard.html" class="btn-primary" style="margin-top: 1.5rem;">Back to Exams</a>
+  <p id="errorMessage">—</p>
+  <a href="dashboard.html" class="btn-primary">Back to Exams</a>
 </div>
 
 <div id="content" style="display: none;">
@@ -58,12 +58,12 @@
 
     <!-- ===== METADATA BAR ===== -->
     <div class="meta-bar">
-      <div style="flex: 1;">
+      <div class="meta-main">
         <div class="badges" id="metaBadges"></div>
         <div class="meta-info">
-          <div class="meta-block" style="flex: 0 1 auto; max-width: 320px;">
+          <div class="meta-block meta-block--title">
             <span class="meta-label">Title</span>
-            <span class="meta-value" id="metaTitle" style="font-weight:600;">—</span>
+            <span class="meta-value" id="metaTitle" class="meta-value--bold">—</span>
           </div>
           <div class="meta-block">
             <span class="meta-label">Code</span>
@@ -87,7 +87,7 @@
           </div>
           <div class="meta-block">
             <span class="meta-label">Window</span>
-            <span class="meta-value" id="metaWindow" style="font-size: 0.78rem;">—</span>
+            <span class="meta-value" id="metaWindow" class="meta-value meta-window">—</span>
           </div>
         </div>
       </div>
@@ -119,9 +119,9 @@
               <p>Drop the JSON file here, or click to browse</p>
               <span class="hint">.json files only</span>
             </label>
-            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--medium-blue); font-family: var(--font-display); font-style: italic;">
+            <p class="upload-hint">
               Don't have a JSON yet? Generate it with Claude and upload here.
-              <button type="button" id="openPromptBtn" style="background: none; border: none; padding: 0; color: var(--nd-gold); font-weight: 600; cursor: pointer; font-family: var(--font-display); font-style: italic; font-size: 1rem; text-decoration: underline;">View the conversion prompt</button>
+              <button type="button" id="openPromptBtn" class="inline-link-btn">View the conversion prompt</button>
               and use it with Claude to generate your JSON.
             </p>
           </div>
@@ -177,13 +177,13 @@
           <div class="dirty-indicator" id="dirtyIndicator">
             <strong>Unsaved</strong> You have unsaved changes. Click Save Draft or Publish to keep them.
           </div>
-          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <div class="action-stack">
             <button class="btn-tertiary" id="previewBtn" disabled>Preview</button>
             <button class="btn-primary" id="saveDraftBtn" disabled>Save Draft</button>
             <button class="btn-primary" id="publishBtn" disabled>Publish</button>
             <button class="btn-secondary" id="archiveBtn" style="display: none;">Archive</button>
           </div>
-          <p style="margin-top: 0.85rem; font-size: 0.78rem; color: var(--medium-blue); font-family: var(--font-display); font-style: italic; line-height: 1.4;">
+          <p class="panel-hint">
             Drafts are saved but not visible to students. Publishing makes the assessment available within its scheduled window.
           </p>
         </div>
@@ -227,8 +227,7 @@
     <div id="editQTypeSpecific"></div>
 
     <div class="modal-field">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label style="margin-bottom: 0;">Raw JSON (advanced)</label>
+      <div class="modal-field-header"><label>Raw JSON (advanced)</label>
         <button type="button" class="json-toggle" id="jsonToggleBtn">Show</button>
       </div>
       <div class="json-viewer" id="editQJson" style="display: none;">—</div>
@@ -253,15 +252,14 @@
       <input type="file" id="imageFileInput" accept="image/png,image/jpeg,image/webp">
     </div>
 
-    <div id="imagePreviewWrap" style="display: none; margin-bottom: 1rem;">
-      <label style="font-size: 0.6rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--medium-blue);">Preview</label>
-      <div style="margin-top: 0.4rem; padding: 0.5rem; border: 1px solid var(--dark-sky-blue); background: var(--light-sky-blue); text-align: center;">
-        <img id="imagePreview" style="max-width: 100%; max-height: 320px;">
+    <div id="imagePreviewWrap" class="modal-preview-wrap" style="display: none;">
+      <label class="modal-preview-label">Preview</label>
+      <div class="modal-preview-box">
+        <img id="imagePreview">
       </div>
     </div>
 
-    <p style="font-size: 0.8rem; color: var(--medium-blue); font-family: var(--font-display); font-style: italic;">
-      Accepted: PNG, JPEG, WebP. Max 5 MB. The file will be saved to Supabase Storage.
+    <p class="upload-file-hint">Accepted: PNG, JPEG, WebP. Max 5 MB. The file will be saved to Supabase Storage.
     </p>
 
     <div class="modal-actions">
@@ -273,7 +271,7 @@
 
 <!-- ===== SECTION EDIT MODAL ===== -->
 <div class="modal-overlay" id="sectionModal">
-  <div class="modal" style="max-width: 640px;">
+  <div class="modal modal--sm">
     <div class="modal-stamp" id="sectionModalStamp">Edit Section</div>
     <h2 id="sectionModalTitle">Section</h2>
     <p class="modal-sub">Set the section title, instructions, and an optional reading passage.</p>
@@ -290,7 +288,7 @@
 
     <div class="modal-field">
       <label>Reading Passage (optional)</label>
-      <textarea id="secEditPassage" placeholder="Paste the article or reading content here. Leave blank for sections without a passage." style="min-height: 140px;"></textarea>
+      <textarea id="secEditPassage" placeholder="Paste the article or reading content here. Leave blank for sections without a passage." class="passage-textarea"></textarea>
     </div>
 
     <div class="modal-actions">
@@ -302,24 +300,24 @@
 
 <!-- ===== METADATA EDIT MODAL ===== -->
 <div class="modal-overlay" id="metadataModal">
-  <div class="modal" style="max-width: 640px;">
+  <div class="modal modal--sm">
     <div class="modal-stamp">Edit Metadata</div>
     <h2 id="metadataModalTitle">—</h2>
     <p class="modal-sub" id="metadataModalCode">—</p>
 
-    <div style="background: var(--light-sky-blue); border-left: 3px solid var(--medium-blue); padding: 0.85rem 1rem; margin-bottom: 1.5rem; color: var(--medium-blue); font-family: var(--font-display); font-style: italic; font-size: 0.95rem;">
-      <strong style="font-style: normal; font-family: var(--font-body); font-size: 0.85rem;">Locked:</strong>
+    <div class="locked-info">
+      <strong>Locked:</strong>
       Year, Quarter, Type, and Code cannot be changed because they are part of the exam's access code. To change these, archive this exam and create a new one.
     </div>
 
     <form id="metadataForm">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-        <div class="modal-field" style="grid-column: 1 / -1;">
+      <div class="modal-grid">
+        <div class="modal-field full">
           <label>Title</label>
           <input type="text" id="metaEditTitle" required placeholder="Assessment title">
         </div>
 
-        <div class="modal-field" style="grid-column: 1 / -1;">
+        <div class="modal-field full">
           <label>Class</label>
           <select id="metaEditClassId" required></select>
         </div>
@@ -344,7 +342,7 @@
           <input type="datetime-local" id="metaEditAvailableUntil" required>
         </div>
 
-        <div class="modal-field" style="grid-column: 1 / -1;">
+        <div class="modal-field full">
           <label>Status</label>
           <select id="metaEditStatus" required>
             <option value="active">Active</option>
@@ -353,7 +351,7 @@
           </select>
         </div>
 
-        <div class="modal-field" style="grid-column: 1 / -1;">
+        <div class="modal-field full">
           <label>Results Visibility</label>
           <select id="metaEditResultsVisibility">
             <option value="score_only">Score only</option>
@@ -362,7 +360,7 @@
           </select>
         </div>
 
-        <div class="modal-field" style="grid-column: 1 / -1;">
+        <div class="modal-field full">
           <label>Notes</label>
           <textarea id="metaEditNotes"></textarea>
         </div>
@@ -378,48 +376,48 @@
 
 <!-- ===== CONVERSION PROMPT MODAL ===== -->
 <div class="modal-overlay" id="promptModal">
-  <div class="modal" style="max-width: 820px;">
+  <div class="modal modal--lg">
     <div class="modal-stamp">Claude Conversion Prompt</div>
-    <h2>How to generate your <em style="font-style: italic; color: var(--nd-gold); font-weight: 500;">exam JSON</em></h2>
+    <h2>How to generate your <em class="gold-em">exam JSON</em></h2>
     <p class="modal-sub">Follow these steps to convert your exam document into the format this platform expects.</p>
 
-    <div style="background: var(--light-sky-blue); border-left: 3px solid var(--nd-gold); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
-      <ol style="list-style: none; counter-reset: step; margin: 0; padding: 0;">
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">01</span>
-          Open <a href="https://claude.ai" target="_blank" style="color: var(--nd-gold); font-weight: 600;">claude.ai</a> in a new tab and start a fresh conversation.
+    <div class="prompt-steps-box">
+      <ol class="step-list">
+        <li class="step-item">
+          <span class="step-num">01</span>
+          Open <a href="https://claude.ai" target="_blank" class="gold-link">claude.ai</a> in a new tab and start a fresh conversation.
         </li>
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">02</span>
+        <li class="step-item">
+          <span class="step-num">02</span>
           <strong>Attach your exam document </strong> (PDF or DOCX) to the message. Include your answers either in a separate file or directly within the exam document (e.g., the correct option <mark>highlighted</mark> or in <strong>bold</strong>).
         </li>
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">03</span>
+        <li class="step-item">
+          <span class="step-num">03</span>
           <strong>Copy the prompt below</strong> and paste it into the same message, then send.
         </li>
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">04</span>
+        <li class="step-item">
+          <span class="step-num">04</span>
           Claude will reply with a JSON file. <strong>Download the file</strong> and save it on your computer.
         </li>
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">05</span>
-          Come back here and upload the <code style="font-family: 'JetBrains Mono', monospace; background: var(--medium-sky-blue); padding: 0.05rem 0.3rem; font-size: 0.85rem;">.json</code> file. Review the questions, upload any required images, then save.
+        <li class="step-item">
+          <span class="step-num">05</span>
+          Come back here and upload the <code class="inline-code">.json</code> file. Review the questions, upload any required images, then save.
         </li>
       </ol>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; gap: 1rem; flex-wrap: wrap;">
+    <div class="prompt-header">
       <div>
-        <div style="font-size: 0.6rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--medium-blue);">The Prompt</div>
-        <div style="font-family: var(--font-display); font-style: italic; font-size: 0.9rem; color: var(--medium-blue); margin-top: 0.2rem;">Copy this entire block and paste it with your document.</div>
+        <span class="prompt-label">The Prompt</span>
+        <span class="prompt-hint-text">Copy this entire block and paste it with your document.</span>
       </div>
-      <div style="display: flex; gap: 0.5rem;">
-        <button type="button" class="btn-secondary" id="togglePromptBtn" style="padding: 0.55rem 1rem;">Expand</button>
-        <button type="button" class="btn-primary" id="copyPromptBtn" style="padding: 0.55rem 1.25rem;">Copy Prompt</button>
+      <div class="prompt-header-actions">
+        <button type="button" class="btn-secondary" id="togglePromptBtn" class="btn-secondary btn--compact">Expand</button>
+        <button type="button" class="btn-primary" id="copyPromptBtn">Copy Prompt</button>
       </div>
     </div>
 
-    <pre id="promptBox" style="background: var(--nd-blue); color: var(--light-warm-white); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.55; padding: 1.25rem; max-height: 240px; overflow-y: auto; white-space: pre-wrap; word-break: normal; transition: max-height 0.3s ease; margin: 0;">Loading prompt…</pre>
+    <pre id="promptBox" class="prompt-box">Loading prompt…</pre>
 
     <div class="modal-actions">
       <button type="button" class="btn-secondary" onclick="closePromptModal()">Close</button>
@@ -968,9 +966,9 @@ IMPORTANT for drag_categorize:
       const titleEl = document.createElement('div');
       titleEl.style.marginBottom = '1.25rem';
       titleEl.innerHTML = `
-        <div style="font-size: 0.6rem; font-weight: 600; letter-spacing: 0.22em; color: var(--nd-gold); text-transform: uppercase; margin-bottom: 0.3rem;">Exam Title</div>
-        <div style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: var(--nd-blue);">${escapeHtml(examDef.exam_metadata.title)}</div>
-        ${examDef.exam_metadata.instructions ? `<div style="font-style: italic; font-family: var(--font-display); color: var(--medium-blue); margin-top: 0.4rem;">${escapeHtml(examDef.exam_metadata.instructions)}</div>` : ''}
+        <div class="exam-def-stamp">Exam Title</div>
+        <div class="exam-def-title">${escapeHtml(examDef.exam_metadata.title)}</div>
+        ${examDef.exam_metadata.instructions ? `<div class="exam-def-instructions">${escapeHtml(examDef.exam_metadata.instructions)}</div>` : ''}
       `;
       container.appendChild(titleEl);
     }
@@ -1013,10 +1011,10 @@ IMPORTANT for drag_categorize:
       sectionEl.innerHTML = `
         <div class="section-header">
           <div class="section-header-row">
-            <div style="flex: 1; min-width: 0;">
+            <div class="flex-min">
               <div class="section-label">Section ${sIdx + 1} of ${sections.length}</div>
               <div class="section-title-text">${escapeHtml(section.title || 'Untitled section')}</div>
-              ${section.instructions ? `<div style="font-style: italic; font-family: var(--font-display); color: var(--medium-blue); margin-top: 0.3rem; font-size: 0.95rem;">${escapeHtml(section.instructions)}</div>` : ''}
+              ${section.instructions ? `<div class="section-instructions">${escapeHtml(section.instructions)}</div>` : ''}
             </div>
             <div class="section-actions">
               <button class="section-action-btn" title="Move section up" onclick="moveSection(${sIdx}, -1)" ${isFirstSection ? 'disabled' : ''}>↑</button>
@@ -1254,7 +1252,7 @@ IMPORTANT for drag_categorize:
           <span class="type-badge">${escapeHtml(q.type || 'unknown')}</span>
           <span class="${gradingClass}">${q.grading || '?'}</span>
           <span class="points">${q.points ?? '?'} pt${q.points === 1 ? '' : 's'}</span>
-          ${q.image ? `<span style="color: var(--medium-blue);">📷 image</span>` : ''}
+          ${q.image ? `<span class="text-medium-blue">📷 image</span>` : ''}
         </div>
       </div>
       ${warningHtml}
@@ -1736,7 +1734,7 @@ IMPORTANT for drag_categorize:
           `).join('')}
         </div>
         <button class="add-row-btn" id="addMsOptBtn">+ Add Option</button>
-        <div class="editor-section-hint" style="margin-top:0.5rem;">
+        <div class="editor-section-hint editor-hint--mt">
           Points are distributed equally across correct options. Total points set above.
         </div>
       </div>
@@ -1773,11 +1771,11 @@ IMPORTANT for drag_categorize:
     container.innerHTML = `
       <div class="editor-section">
         <div class="editor-section-label">Correct Answer</div>
-        <div style="display: flex; gap: 0.6rem; margin-top: 0.4rem;">
-          <label class="sub-radio" style="padding: 0.5rem 1rem; border: 1px solid var(--medium-blue); flex: 1; justify-content: center;">
+        <div class="tf-btn-group">
+          <label class="sub-radio sub-radio--btn">
             <input type="radio" name="tf-answer" value="T" ${q.answer === 'T' ? 'checked' : ''}> True
           </label>
-          <label class="sub-radio" style="padding: 0.5rem 1rem; border: 1px solid var(--medium-blue); flex: 1; justify-content: center;">
+          <label class="sub-radio sub-radio--btn">
             <input type="radio" name="tf-answer" value="F" ${q.answer === 'F' ? 'checked' : ''}> False
           </label>
         </div>
@@ -1794,10 +1792,10 @@ IMPORTANT for drag_categorize:
     container.innerHTML = `
       <div class="editor-section">
         <div class="editor-section-label">Answer</div>
-        <div class="editor-section-hint">Use <code style="font-family:monospace;background:var(--medium-sky-blue);padding:0 0.25rem;">{blank}</code> in the prompt to mark where the blank goes.</div>
+        <div class="editor-section-hint">Use <code class="inline-code">{blank}</code> in the prompt to mark where the blank goes.</div>
         <div class="modal-field"><label>Correct Answer</label><input type="text" id="fb-answer" value="${escapeHtml(q.answer || '')}"></div>
         <div class="modal-field"><label>Accepted Variants (comma separated)</label><input type="text" id="fb-accepted" value="${escapeHtml(q.accepted_answers.join(', '))}" placeholder="e.g. cannot, can not, can't"></div>
-        <label class="sub-radio" style="margin-top:0.5rem;"><input type="checkbox" id="fb-case" ${q.case_sensitive ? 'checked' : ''}> Case sensitive</label>
+        <label class="sub-radio sub-radio--mt"><input type="checkbox" id="fb-case" ${q.case_sensitive ? 'checked' : ''}> Case sensitive</label>
       </div>
     `;
     document.getElementById('fb-answer').addEventListener('input', e => { q.answer = e.target.value; refreshJsonViewer(q); });
@@ -1811,7 +1809,7 @@ IMPORTANT for drag_categorize:
     container.innerHTML = `
       <div class="editor-section">
         <div class="editor-section-label"><span>Blanks (in order)</span></div>
-        <div class="editor-section-hint">Each <code style="font-family:monospace;background:var(--medium-sky-blue);padding:0 0.25rem;">{blank}</code> in the prompt corresponds to one row below, in order.</div>
+        <div class="editor-section-hint">Each <code class="inline-code">{blank}</code> in the prompt corresponds to one row below, in order.</div>
         <div class="blank-row-header"><span>ID</span><span>Answer</span><span>Accepted</span><span>Points</span><span></span></div>
         <div id="blanksList">
           ${q.blanks.map((b, i) => `
@@ -1825,7 +1823,7 @@ IMPORTANT for drag_categorize:
           `).join('')}
         </div>
         <button class="add-row-btn" id="addBlankBtn">+ Add Blank</button>
-        <label class="sub-radio" style="margin-top:0.6rem;"><input type="checkbox" id="fbm-case" ${q.case_sensitive ? 'checked' : ''}> Case sensitive</label>
+        <label class="sub-radio sub-radio--mt"><input type="checkbox" id="fbm-case" ${q.case_sensitive ? 'checked' : ''}> Case sensitive</label>
       </div>
     `;
     container.querySelectorAll('[data-fbm-answer]').forEach(input => { input.addEventListener('input', () => { q.blanks[parseInt(input.dataset.fbmAnswer)].answer = input.value; refreshJsonViewer(q); }); });
@@ -1846,9 +1844,9 @@ IMPORTANT for drag_categorize:
     container.innerHTML = `
       <div class="editor-section">
         <div class="editor-section-label">Dropdown Options</div>
-        <div class="editor-section-hint">Use <code style="font-family:monospace;background:var(--medium-sky-blue);padding:0 0.25rem;">{choice}</code> in the prompt to mark where the dropdown appears. Click the circle to mark the correct answer.</div>
+        <div class="editor-section-hint">Use <code class="inline-code">{choice}</code> in the prompt to mark where the dropdown appears. Click the circle to mark the correct answer.</div>
         ${q.options.map((opt, i) => `
-          <div class="sub-row" style="grid-template-columns:1fr auto;">
+          <div class="sub-row sub-row--2col">
             <input type="text" data-dd-text="${i}" value="${escapeHtml(opt || '')}" placeholder="Option ${i+1}">
             <label class="sub-radio">
               <input type="radio" name="dd-answer" data-dd-answer="${escapeHtml(opt || '')}" ${q.answer === opt && opt ? 'checked' : ''}>

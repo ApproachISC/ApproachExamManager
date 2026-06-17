@@ -8,1304 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<style>
-  :root {
-    --nd-blue: #0c2340;
-    --nd-gold: #ae9142;
-    --medium-blue: #143865;
-    --bright-blue: #1c4f8f;
-    --dark-sky-blue: #c1cddd;
-    --medium-sky-blue: #e1e8f2;
-    --light-sky-blue: #edf2f9;
-    --dark-gold: #8c7535;
-    --bright-gold: #d39f10;
-    --warm-white: #efe9d9;
-    --light-warm-white: #f8f4ec;
-    --accent-red: #ab100b;
-    --success-green: #3a6b3a;
-    --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
-    --font-body: 'Montserrat', system-ui, sans-serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: var(--font-body);
-    background: var(--light-warm-white);
-    color: var(--nd-blue);
-    min-height: 100vh;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ===== BRAND BAR ===== */
-  .brand-bar {
-    background: var(--nd-blue);
-    color: var(--light-warm-white);
-    padding: 0.7rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    border-bottom: 3px solid var(--nd-gold);
-  }
-  .brand-bar-logo { display: flex; align-items: center; gap: 0.6rem; }
-  .brand-monogram {
-    font-family: var(--font-display);
-    font-size: 1.3rem; font-weight: 600;
-    color: var(--nd-gold); line-height: 1;
-  }
-  .brand-bar-right { display: flex; align-items: center; gap: 1.5rem; }
-  .user-info {
-    font-size: 0.7rem;
-    color: var(--dark-sky-blue);
-    text-transform: none;
-    letter-spacing: 0.05em;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-  .user-info strong { color: var(--nd-gold); font-weight: 600; }
-  .nav-link {
-    color: var(--dark-sky-blue);
-    text-decoration: none;
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 0.4rem 0.85rem;
-    border: 1px solid transparent;
-    transition: all 0.15s;
-  }
-  .nav-link:hover { color: var(--nd-gold); border-color: var(--nd-gold); }
-
-  .user-menu {
-    position: relative;
-  }
-  .user-menu-trigger {
-    background: transparent;
-    border: none;
-    color: var(--light-warm-white);
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 0.7rem 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: color 0.15s;
-  }
-  .user-menu-trigger:hover {
-    color: var(--nd-gold);
-  }
-  .user-menu-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border: 1px solid var(--dark-sky-blue);
-    border-top: 3px solid var(--nd-gold);
-    box-shadow: 0 4px 12px rgba(12, 35, 64, 0.15);
-    border-radius: 2px;
-    min-width: 160px;
-    z-index: 1000;
-    display: none;
-    margin-top: 0.5rem;
-  }
-  .user-menu-dropdown.show {
-    display: block;
-  }
-  .user-menu-dropdown a,
-  .user-menu-dropdown button {
-    display: block;
-    width: 100%;
-    padding: 0.9rem 1.2rem;
-    text-align: left;
-    border: none;
-    background: transparent;
-    color: var(--nd-blue);
-    text-decoration: none;
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-  }
-  .user-menu-dropdown a:hover,
-  .user-menu-dropdown button:hover {
-    background: var(--light-sky-blue);
-    color: var(--bright-blue);
-  }
-  .user-menu-dropdown a:first-child {
-    border-top: 1px solid var(--medium-sky-blue);
-  }
-  .user-menu-dropdown button {
-    border-top: 1px solid var(--medium-sky-blue);
-    color: var(--accent-red);
-  }
-  .user-menu-dropdown button:hover {
-    background: rgba(171, 16, 11, 0.08);
-  }
-
-  /* ===== BREADCRUMB ===== */
-  .breadcrumb {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 1.5rem 2rem 0;
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-  }
-  .breadcrumb a { color: var(--medium-blue); text-decoration: none; }
-  .breadcrumb a:hover { color: var(--nd-gold); }
-  .breadcrumb span { margin: 0 0.5rem; color: var(--dark-sky-blue); }
-
-  /* ===== PAGE LAYOUT ===== */
-  .page {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 1rem 2rem 5rem;
-  }
-
-  /* ===== METADATA BAR ===== */
-  .meta-bar {
-    background: #fff;
-    border-top: 4px solid var(--nd-gold);
-    padding: 1.5rem 2rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 8px rgba(12, 35, 64, 0.04);
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-  .meta-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1.5rem;
-    flex: 1;
-  }
-  .meta-block { display: flex; flex-direction: column; gap: 0.25rem; }
-  .meta-label {
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-  }
-  .meta-value {
-    font-size: 0.95rem;
-    color: var(--nd-blue);
-    font-weight: 500;
-  }
-  .meta-value.code {
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.05em;
-    color: var(--nd-gold);
-    font-weight: 600;
-  }
-  .meta-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
-
-  .badges { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
-  .badge {
-    display: inline-block;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    border: 1px solid;
-  }
-  .badge.draft {
-    background: var(--light-warm-white);
-    color: var(--dark-gold);
-    border-color: var(--dark-gold);
-    border-style: dashed;
-  }
-  .badge.active {
-    background: rgba(58, 107, 58, 0.1);
-    color: var(--success-green);
-    border-color: var(--success-green);
-  }
-  .badge.archived {
-    background: var(--light-sky-blue);
-    color: var(--dark-sky-blue);
-    border-color: var(--dark-sky-blue);
-  }
-
-  /* ===== TWO-COLUMN GRID ===== */
-  .layout {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 1.5rem;
-    align-items: start;
-  }
-
-  .main-col { display: flex; flex-direction: column; gap: 1.5rem; }
-
-  /* ===== SECTION CARDS ===== */
-  .card {
-    background: #fff;
-    border-top: 3px solid var(--nd-gold);
-    box-shadow: 0 2px 8px rgba(12, 35, 64, 0.04);
-    padding: 2rem;
-  }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--dark-sky-blue);
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-  .card-title {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--nd-blue);
-  }
-  .card-subtitle {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 0.95rem;
-    color: var(--medium-blue);
-    margin-top: 0.2rem;
-  }
-
-  /* ===== UPLOAD AREA ===== */
-  .upload-zone {
-    border: 2px dashed var(--dark-sky-blue);
-    background: var(--light-sky-blue);
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .upload-zone:hover, .upload-zone.dragover {
-    border-color: var(--nd-gold);
-    background: rgba(174, 145, 66, 0.08);
-  }
-  .upload-zone .icon {
-    font-family: var(--font-display);
-    font-size: 2.5rem;
-    color: var(--nd-gold);
-    margin-bottom: 0.5rem;
-  }
-  .upload-zone p {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 1.1rem;
-    color: var(--medium-blue);
-    margin-bottom: 0.5rem;
-  }
-  .upload-zone .hint {
-    font-style: normal;
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    color: var(--medium-blue);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .upload-zone input[type="file"] { display: none; }
-
-  /* ===== IMAGE UPLOAD ITEM ===== */
-  .image-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--light-sky-blue);
-    border-left: 3px solid var(--medium-blue);
-    margin-bottom: 0.75rem;
-  }
-  .image-item.uploaded {
-    background: rgba(58, 107, 58, 0.08);
-    border-left-color: var(--success-green);
-  }
-  .image-item.missing {
-    background: rgba(171, 16, 11, 0.06);
-    border-left-color: var(--accent-red);
-  }
-  .image-item-thumb {
-    width: 60px; height: 60px;
-    background: #fff;
-    border: 1px solid var(--dark-sky-blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .image-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .image-item-thumb .placeholder {
-    color: var(--dark-sky-blue);
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-  }
-  .image-item-info { flex: 1; min-width: 0; }
-  .image-item-name {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    color: var(--nd-blue);
-    font-weight: 600;
-    word-break: break-all;
-  }
-  .image-item-meta {
-    font-size: 0.78rem;
-    color: var(--medium-blue);
-    font-style: italic;
-    font-family: var(--font-display);
-    margin-top: 0.2rem;
-  }
-  .image-item-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
-
-  /* ===== QUESTION LIST ===== */
-  .section-block {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--dark-sky-blue);
-  }
-  .section-block:last-child { border-bottom: none; padding-bottom: 0; }
-
-  .section-header {
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px dashed var(--dark-sky-blue);
-  }
-  .section-label {
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    color: var(--nd-gold);
-    text-transform: uppercase;
-    margin-bottom: 0.2rem;
-  }
-  .section-title-text {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--nd-blue);
-  }
-  .section-passage {
-    background: var(--light-warm-white);
-    border-left: 3px solid var(--nd-gold);
-    padding: 0.85rem 1.1rem;
-    margin-top: 0.5rem;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 0.95rem;
-    color: var(--medium-blue);
-    line-height: 1.5;
-    max-height: 6rem;
-    overflow: hidden;
-    position: relative;
-  }
-  .section-passage.expanded { max-height: none; }
-  .section-passage .passage-toggle {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: linear-gradient(to right, transparent, var(--light-warm-white) 30%);
-    padding: 0 0.5rem 0 2rem;
-    font-style: normal;
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--nd-gold);
-    cursor: pointer;
-  }
-
-  .question-row {
-    background: var(--light-sky-blue);
-    border-left: 3px solid var(--medium-blue);
-    padding: 1rem 1.25rem;
-    margin-bottom: 0.5rem;
-    display: grid;
-    grid-template-columns: auto 1fr auto auto;
-    gap: 1rem;
-    align-items: center;
-    position: relative;
-  }
-
-  /* ===== INLINE INSERT BAR ===== */
-  .insert-bar {
-    height: 18px;
-    margin: -3px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.15s;
-    user-select: none;
-  }
-  .insert-bar::before {
-    content: '';
-    position: absolute;
-    left: 0; right: 0; top: 50%;
-    height: 1px;
-    background: transparent;
-    border-top: 1px dashed var(--dark-sky-blue);
-    transition: all 0.15s;
-  }
-  .insert-bar .insert-label {
-    position: relative;
-    z-index: 1;
-    background: #fff;
-    color: var(--dark-sky-blue);
-    font-family: var(--font-body);
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 0 0.6rem;
-    opacity: 0;
-    transition: opacity 0.15s;
-  }
-  .insert-bar:hover {
-    height: 36px;
-    margin: 4px 0;
-  }
-  .insert-bar:hover::before {
-    border-top-color: var(--nd-gold);
-  }
-  .insert-bar:hover .insert-label {
-    opacity: 1;
-    color: var(--nd-gold);
-  }
-  .insert-bar.expanded {
-    height: auto;
-    margin: 6px 0;
-    cursor: default;
-  }
-  .insert-bar.expanded::before { display: none; }
-
-  /* Type picker (shown when insert-bar is expanded) */
-  .type-picker {
-    background: var(--light-sky-blue);
-    border-left: 3px solid var(--nd-gold);
-    padding: 0.85rem 1rem;
-    width: 100%;
-  }
-  .type-picker-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.6rem;
-  }
-  .type-picker-title {
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-  }
-  .type-picker-close {
-    background: transparent;
-    border: none;
-    color: var(--medium-blue);
-    cursor: pointer;
-    font-size: 1.2rem;
-    line-height: 1;
-    padding: 0 0.2rem;
-  }
-  .type-picker-close:hover { color: var(--accent-red); }
-  .type-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 0.4rem;
-  }
-  .type-pill {
-    background: #fff;
-    border: 1px solid var(--dark-sky-blue);
-    color: var(--medium-blue);
-    font-family: var(--font-body);
-    font-size: 0.78rem;
-    font-weight: 500;
-    padding: 0.55rem 0.75rem;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .type-pill:hover {
-    background: var(--nd-blue);
-    border-color: var(--nd-gold);
-  }
-  .type-pill .type-name {
-    display: block;
-    font-weight: 600;
-    color: var(--nd-blue);
-    font-size: 0.85rem;
-  }
-  .type-pill:hover .type-name { color: var(--nd-gold); }
-  .type-pill .type-desc {
-    display: block;
-    font-style: italic;
-    font-family: var(--font-display);
-    font-size: 0.78rem;
-    margin-top: 0.15rem;
-    color: var(--medium-blue);
-  }
-  .type-pill:hover .type-desc { color: var(--dark-sky-blue); }
-
-  /* Hover actions on question rows */
-  .q-hover-actions {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    display: flex;
-    gap: 0.2rem;
-    opacity: 0;
-    transition: opacity 0.15s;
-  }
-  .question-row:hover .q-hover-actions { opacity: 1; }
-  .q-hover-btn {
-    background: #fff;
-    border: 1px solid var(--dark-sky-blue);
-    color: var(--medium-blue);
-    width: 26px;
-    height: 26px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    line-height: 1;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-  .q-hover-btn:hover:not(:disabled) {
-    background: var(--nd-blue);
-    color: var(--nd-gold);
-    border-color: var(--nd-gold);
-  }
-  .q-hover-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-  .q-hover-btn.delete:hover {
-    background: var(--accent-red);
-    color: #fff;
-    border-color: var(--accent-red);
-  }
-
-  /* Section actions */
-  .section-actions {
-    display: flex;
-    gap: 0.3rem;
-    align-items: center;
-  }
-  .section-action-btn {
-    background: transparent;
-    border: 1px solid var(--medium-blue);
-    color: var(--medium-blue);
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    line-height: 1;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-  .section-action-btn:hover:not(:disabled) {
-    background: var(--medium-blue);
-    color: var(--light-warm-white);
-  }
-  .section-action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .section-action-btn.delete:hover {
-    background: var(--accent-red);
-    color: #fff;
-    border-color: var(--accent-red);
-  }
-
-  .section-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  /* Add Section button */
-  .add-section-bar {
-    margin: 1.5rem 0 0 0;
-    padding: 1rem;
-    text-align: center;
-    border: 2px dashed var(--dark-sky-blue);
-    cursor: pointer;
-    transition: all 0.15s;
-    background: transparent;
-    color: var(--medium-blue);
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    width: 100%;
-  }
-  .add-section-bar:hover {
-    border-color: var(--nd-gold);
-    color: var(--nd-gold);
-    background: var(--light-warm-white);
-  }
-
-  /* Unsaved changes indicator */
-  .dirty-indicator {
-    display: none;
-    background: rgba(211, 159, 16, 0.1);
-    border-left: 3px solid var(--bright-gold);
-    padding: 0.6rem 0.85rem;
-    color: var(--dark-gold);
-    font-size: 0.78rem;
-    font-style: italic;
-    font-family: var(--font-display);
-    margin-bottom: 0.85rem;
-  }
-  .dirty-indicator.show { display: block; }
-  .dirty-indicator strong {
-    font-style: normal;
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent-red);
-    margin-right: 0.4rem;
-  }
-  .question-row.has-warning {
-    background: rgba(211, 159, 16, 0.08);
-    border-left-color: var(--bright-gold);
-  }
-  .question-row.has-error {
-    background: rgba(171, 16, 11, 0.06);
-    border-left-color: var(--accent-red);
-  }
-  .q-num-badge {
-    background: var(--nd-blue);
-    color: var(--nd-gold);
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    padding: 0.25rem 0.55rem;
-    font-variant-numeric: tabular-nums;
-    align-self: flex-start;
-  }
-  .q-info { min-width: 0; }
-  .q-prompt-preview {
-    font-size: 0.95rem;
-    color: var(--nd-blue);
-    margin-bottom: 0.3rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-  .q-meta {
-    display: flex;
-    gap: 0.75rem;
-    font-size: 0.72rem;
-    color: var(--medium-blue);
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.05em;
-    flex-wrap: wrap;
-  }
-  .q-meta .type-badge {
-    color: var(--nd-blue);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .q-meta .auto { color: var(--success-green); font-weight: 600; }
-  .q-meta .manual { color: var(--dark-gold); font-weight: 600; }
-  .q-meta .points {
-    color: var(--nd-gold);
-    font-weight: 600;
-  }
-  .q-warnings {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    align-items: flex-end;
-    font-size: 0.7rem;
-    color: var(--accent-red);
-    font-style: italic;
-    font-family: var(--font-display);
-  }
-  .q-warnings .warn-icon {
-    color: var(--bright-gold);
-  }
-  .q-actions { display: flex; gap: 0.3rem; }
-  .q-btn {
-    background: transparent;
-    border: 1px solid var(--medium-blue);
-    color: var(--medium-blue);
-    font-family: var(--font-body);
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 0.35rem 0.65rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .q-btn:hover {
-    background: var(--medium-blue);
-    color: var(--light-warm-white);
-  }
-  .q-btn.delete { border-color: var(--accent-red); color: var(--accent-red); }
-  .q-btn.delete:hover { background: var(--accent-red); color: #fff; }
-
-  /* ===== SIDEBAR (PUBLISH PANEL + VALIDATION) ===== */
-  .sidebar { position: sticky; top: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
-
-  .panel {
-    background: #fff;
-    border-top: 3px solid var(--nd-gold);
-    box-shadow: 0 2px 8px rgba(12, 35, 64, 0.04);
-    padding: 1.5rem;
-  }
-  .panel-title {
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--nd-blue);
-    margin-bottom: 0.85rem;
-    padding-bottom: 0.6rem;
-    border-bottom: 1px solid var(--dark-sky-blue);
-  }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.4rem 0;
-    font-size: 0.85rem;
-    border-bottom: 1px dashed var(--dark-sky-blue);
-  }
-  .summary-row:last-child { border-bottom: none; }
-  .summary-row .label { color: var(--medium-blue); }
-  .summary-row .value {
-    color: var(--nd-blue);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
-  .summary-row.warning .value { color: var(--accent-red); }
-
-  /* Validation list */
-  .validation-list { list-style: none; margin-top: 0.5rem; }
-  .validation-list li {
-    padding: 0.4rem 0 0.4rem 1.25rem;
-    position: relative;
-    font-size: 0.82rem;
-    color: var(--medium-blue);
-    line-height: 1.4;
-  }
-  .validation-list li::before {
-    position: absolute;
-    left: 0;
-    top: 0.5rem;
-    font-size: 0.85rem;
-  }
-  .validation-list li.ok::before { content: '✓'; color: var(--success-green); }
-  .validation-list li.warn::before { content: '⚠'; color: var(--bright-gold); }
-  .validation-list li.fail::before { content: '✗'; color: var(--accent-red); }
-  .validation-list li.ok { color: var(--success-green); }
-  .validation-list li.fail { color: var(--accent-red); }
-
-  /* ===== BUTTONS ===== */
-  .btn-primary, .btn-secondary, .btn-tertiary, .btn-danger {
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    padding: 0.85rem 1.25rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-  }
-  .btn-primary {
-    background: var(--nd-gold);
-    color: var(--nd-blue);
-    border-bottom: 3px solid var(--nd-blue);
-  }
-  .btn-primary:hover:not(:disabled) { background: var(--bright-gold); }
-  .btn-primary:disabled {
-    background: var(--dark-sky-blue);
-    color: var(--medium-blue);
-    cursor: not-allowed;
-    border-bottom-color: var(--medium-blue);
-  }
-  .btn-secondary {
-    background: transparent;
-    color: var(--medium-blue);
-    border: 1px solid var(--medium-blue);
-  }
-  .btn-secondary:hover { background: var(--medium-blue); color: var(--light-warm-white); }
-  .btn-tertiary {
-    background: var(--nd-blue);
-    color: var(--nd-gold);
-    border-bottom: 3px solid var(--nd-gold);
-  }
-  .btn-tertiary:hover { background: var(--medium-blue); }
-  .btn-danger {
-    background: transparent;
-    color: var(--accent-red);
-    border: 1px solid var(--accent-red);
-  }
-  .btn-danger:hover { background: var(--accent-red); color: #fff; }
-
-  .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .btn-row .btn-primary, .btn-row .btn-secondary { flex: 1; min-width: 0; }
-
-  /* ===== EMPTY STATE ===== */
-  .empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: var(--medium-blue);
-  }
-  .empty-state .icon {
-    font-family: var(--font-display);
-    font-size: 2.5rem;
-    color: var(--dark-sky-blue);
-    margin-bottom: 0.5rem;
-  }
-  .empty-state h3 {
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--nd-blue);
-    margin-bottom: 0.4rem;
-  }
-  .empty-state p {
-    font-style: italic;
-    font-family: var(--font-display);
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  /* ===== EDIT MODAL (per-question editing) ===== */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(12, 35, 64, 0.85);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    overflow-y: auto;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal {
-    background: #fff;
-    max-width: 720px;
-    width: 100%;
-    border-top: 6px solid var(--nd-gold);
-    padding: 2.5rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    margin: 2rem auto;
-  }
-  .modal h2 {
-    font-family: var(--font-display);
-    font-size: 1.7rem;
-    font-weight: 600;
-    color: var(--nd-blue);
-    margin-bottom: 0.25rem;
-  }
-  .modal-stamp {
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.25em;
-    color: var(--nd-gold);
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-  .modal-sub {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 1rem;
-    color: var(--medium-blue);
-    margin-bottom: 1.5rem;
-  }
-  .modal-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 1.25rem;
-  }
-  .modal-field label {
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-  }
-  .modal-field input, .modal-field select, .modal-field textarea {
-    font-family: var(--font-body);
-    font-size: 0.95rem;
-    padding: 0.65rem 0.85rem;
-    border: 1px solid var(--dark-sky-blue);
-    background: var(--light-sky-blue);
-    color: var(--nd-blue);
-    transition: all 0.2s;
-  }
-  .modal-field textarea { min-height: 80px; resize: vertical; }
-  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus {
-    outline: none;
-    border-color: var(--nd-gold);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(174, 145, 66, 0.15);
-  }
-  .modal-field-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-  .modal-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--dark-sky-blue);
-    justify-content: flex-end;
-  }
-
-  /* ===== TYPE-SPECIFIC EDITORS ===== */
-  .editor-section {
-    margin-bottom: 1rem;
-    padding: 0.85rem 1rem;
-    background: var(--light-sky-blue);
-    border-left: 3px solid var(--nd-gold);
-  }
-  .editor-section-label {
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-    margin-bottom: 0.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .editor-section-hint {
-    font-style: italic;
-    font-family: var(--font-display);
-    font-size: 0.85rem;
-    color: var(--medium-blue);
-    margin-bottom: 0.75rem;
-    text-transform: none;
-    letter-spacing: normal;
-    font-weight: 400;
-  }
-
-  /* Generic sub-row used for options/blanks/labels/etc. */
-  .sub-row {
-    display: grid;
-    gap: 0.4rem;
-    align-items: center;
-    padding: 0.4rem 0;
-    border-bottom: 1px dashed var(--dark-sky-blue);
-  }
-  .sub-row:last-child { border-bottom: none; }
-  .sub-row input[type="text"],
-  .sub-row input[type="number"],
-  .sub-row select {
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    padding: 0.45rem 0.6rem;
-    border: 1px solid var(--dark-sky-blue);
-    background: #fff;
-    color: var(--nd-blue);
-    transition: all 0.15s;
-    width: 100%;
-  }
-  .sub-row input:focus, .sub-row select:focus {
-    outline: none;
-    border-color: var(--nd-gold);
-    box-shadow: 0 0 0 2px rgba(174, 145, 66, 0.15);
-  }
-  .sub-row .sub-key {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--nd-gold);
-    background: var(--nd-blue);
-    padding: 0.35rem 0.6rem;
-    text-align: center;
-    min-width: 2.5rem;
-  }
-  .sub-row .sub-radio {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-    cursor: pointer;
-    user-select: none;
-  }
-  .sub-row .sub-radio input { accent-color: var(--nd-gold); cursor: pointer; }
-  .sub-row .sub-radio:has(input:checked) {
-    color: var(--success-green);
-  }
-  .sub-row .sub-delete-btn {
-    background: transparent;
-    border: 1px solid var(--accent-red);
-    color: var(--accent-red);
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    line-height: 1;
-    padding: 0;
-    transition: all 0.15s;
-  }
-  .sub-row .sub-delete-btn:hover { background: var(--accent-red); color: #fff; }
-
-  /* Specific row layouts */
-  .opt-row { grid-template-columns: auto 1fr auto auto; }
-  .blank-row { grid-template-columns: 6rem 1fr 1fr 5rem auto; }
-  .blank-row-header {
-    display: grid;
-    grid-template-columns: 6rem 1fr 1fr 5rem auto;
-    gap: 0.4rem;
-    padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--dark-sky-blue);
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-  }
-  .label-row { grid-template-columns: 1fr 1fr 1fr auto; }
-  .label-row-header {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
-    gap: 0.4rem;
-    padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--dark-sky-blue);
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-  }
-  .left-item-row, .right-item-row { grid-template-columns: 4rem 1fr auto; }
-  .categ-cat-row { grid-template-columns: 6rem 1fr auto; }
-  .categ-item-row { grid-template-columns: 1fr 1fr auto; }
-  .image-info-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem 0.85rem;
-    margin-bottom: 0.5rem;
-  }
-  .image-info-row label {
-    display: block;
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--medium-blue);
-    margin-bottom: 0.2rem;
-  }
-  .image-info-row input {
-    width: 100%;
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    padding: 0.45rem 0.6rem;
-    border: 1px solid var(--dark-sky-blue);
-    background: #fff;
-    color: var(--nd-blue);
-  }
-  .image-info-row input:focus {
-    outline: none;
-    border-color: var(--nd-gold);
-    box-shadow: 0 0 0 2px rgba(174, 145, 66, 0.15);
-  }
-
-  .add-row-btn {
-    margin-top: 0.6rem;
-    background: transparent;
-    border: 1px dashed var(--medium-blue);
-    color: var(--medium-blue);
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 0.55rem 0.85rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    width: 100%;
-  }
-  .add-row-btn:hover {
-    border-color: var(--nd-gold);
-    border-style: solid;
-    color: var(--nd-gold);
-    background: var(--light-warm-white);
-  }
-
-  .answers-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem 1rem;
-    align-items: center;
-  }
-  .answers-grid > div {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .answers-grid .answer-label {
-    flex-shrink: 0;
-    font-size: 0.85rem;
-    color: var(--nd-blue);
-    font-weight: 500;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .answers-grid select {
-    flex: 1;
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    padding: 0.4rem 0.5rem;
-    border: 1px solid var(--dark-sky-blue);
-    background: #fff;
-    color: var(--nd-blue);
-  }
-  .answers-grid select:focus {
-    outline: none;
-    border-color: var(--nd-gold);
-  }
-
-  /* Collapsible JSON viewer */
-  .json-toggle {
-    background: transparent;
-    border: 1px solid var(--medium-blue);
-    color: var(--medium-blue);
-    font-family: var(--font-body);
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 0.45rem 0.85rem;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .json-toggle:hover {
-    background: var(--medium-blue);
-    color: var(--light-warm-white);
-  }
-
-  .json-viewer {
-    background: var(--nd-blue);
-    color: var(--light-warm-white);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    padding: 1rem;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
-    max-height: 280px;
-    overflow-y: auto;
-  }
-  .json-viewer .key { color: var(--nd-gold); }
-  .json-viewer .string { color: #c1cddd; }
-  .json-viewer .number { color: var(--bright-gold); }
-
-  /* ===== TOAST ===== */
-  .toast {
-    position: fixed;
-    top: 5rem;
-    right: 2rem;
-    background: var(--nd-blue);
-    color: var(--light-warm-white);
-    padding: 1rem 1.4rem;
-    border-left: 3px solid var(--nd-gold);
-    font-size: 0.85rem;
-    transform: translateX(120%);
-    transition: transform 0.3s;
-    z-index: 200;
-    max-width: 380px;
-    box-shadow: 0 4px 20px rgba(12, 35, 64, 0.2);
-  }
-  .toast.show { transform: translateX(0); }
-  .toast.error { border-left-color: var(--accent-red); }
-  .toast.success { border-left-color: var(--success-green); }
-
-  /* ===== AUTH LOADING ===== */
-  .auth-loading, .error-screen {
-    text-align: center;
-    padding: 6rem 2rem;
-    color: var(--medium-blue);
-  }
-  .auth-loading .spinner {
-    display: inline-block;
-    width: 40px; height: 40px;
-    border: 3px solid var(--dark-sky-blue);
-    border-top-color: var(--nd-gold);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 1rem;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .error-screen h2 {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    color: var(--nd-blue);
-    margin-bottom: 0.5rem;
-  }
-
-  .copyright {
-    text-align: center;
-    padding: 1.5rem 2rem;
-    background: var(--nd-blue);
-    color: var(--dark-sky-blue);
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    border-top: 2px solid var(--nd-gold);
-  }
-
-  @media (max-width: 1000px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { position: static; }
-  }
-  @media (max-width: 600px) {
-    .modal { padding: 1.5rem; }
-    .modal-field-grid { grid-template-columns: 1fr; }
-    .question-row { grid-template-columns: 1fr; gap: 0.5rem; }
-    .q-actions { justify-content: flex-end; }
-  }
-</style>
 </head>
-<body>
+<body class="page-editor">
 
 <div class="brand-bar">
   <div class="brand-bar-logo">
@@ -1321,7 +25,7 @@
           <span id="userRole"></span>
         </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ae9142" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-icon lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        <span style="font-size: 0.9em;">▼</span>
+        <span class="menu-caret">▼</span>
       </button>
       <div class="user-menu-dropdown" id="userMenuDropdown">
         <a href="qr-generator.html" target="_blank">QR Code Generator ➚</a>
@@ -1336,13 +40,13 @@
 
 <div class="auth-loading" id="authLoading">
   <div class="spinner"></div>
-  <p style="font-family: var(--font-display); font-style: italic;">Loading exam…</p>
+  <p>Loading exam…</p>
 </div>
 
 <div class="error-screen" id="errorScreen" style="display: none;">
   <h2 id="errorTitle">—</h2>
-  <p id="errorMessage" style="font-family: var(--font-display); font-style: italic; font-size: 1.05rem;">—</p>
-  <a href="dashboard.html" class="btn-primary" style="margin-top: 1.5rem;">Back to Exams</a>
+  <p id="errorMessage">—</p>
+  <a href="dashboard.html" class="btn-primary">Back to Exams</a>
 </div>
 
 <div id="content" style="display: none;">
@@ -1354,7 +58,7 @@
 
     <!-- ===== METADATA BAR ===== -->
     <div class="meta-bar">
-      <div style="flex: 1;">
+      <div class="meta-main">
         <div class="badges" id="metaBadges"></div>
         <div class="meta-info">
           <div class="meta-block">
@@ -1379,7 +83,7 @@
           </div>
           <div class="meta-block">
             <span class="meta-label">Window</span>
-            <span class="meta-value" id="metaWindow" style="font-size: 0.78rem;">—</span>
+            <span id="metaWindow" class="meta-value meta-window">—</span>
           </div>
         </div>
       </div>
@@ -1411,9 +115,9 @@
               <p>Drop the JSON file here, or click to browse</p>
               <span class="hint">.json files only</span>
             </label>
-            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--medium-blue); font-family: var(--font-display); font-style: italic;">
+            <p class="upload-hint">
               Don't have a JSON yet?
-              <button type="button" id="openPromptBtn" style="background: none; border: none; padding: 0; color: var(--nd-gold); font-weight: 600; cursor: pointer; font-family: var(--font-display); font-style: italic; font-size: 1rem; text-decoration: underline;">View the conversion prompt</button>
+              <button type="button" id="openPromptBtn" class="inline-link-btn">View the conversion prompt</button>
               and use it with Claude to generate your JSON.
             </p>
           </div>
@@ -1469,13 +173,13 @@
           <div class="dirty-indicator" id="dirtyIndicator">
             <strong>Unsaved</strong> You have unsaved changes. Click Save Draft or Publish to keep them.
           </div>
-          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <div class="action-stack">
             <button class="btn-tertiary" id="previewBtn" disabled>Preview</button>
             <button class="btn-primary" id="saveDraftBtn" disabled>Save Draft</button>
             <button class="btn-primary" id="publishBtn" disabled>Publish</button>
             <button class="btn-secondary" id="archiveBtn" style="display: none;">Archive</button>
           </div>
-          <p style="margin-top: 0.85rem; font-size: 0.78rem; color: var(--medium-blue); font-family: var(--font-display); font-style: italic; line-height: 1.4;">
+          <p class="panel-hint">
             Drafts are saved but not visible to students. Publishing makes the exam available within its scheduled window.
           </p>
         </div>
@@ -1519,8 +223,7 @@
     <div id="editQTypeSpecific"></div>
 
     <div class="modal-field">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label style="margin-bottom: 0;">Raw JSON (advanced)</label>
+      <div class="modal-field-header"><label>Raw JSON (advanced)</label>
         <button type="button" class="json-toggle" id="jsonToggleBtn">Show</button>
       </div>
       <div class="json-viewer" id="editQJson" style="display: none;">—</div>
@@ -1545,15 +248,14 @@
       <input type="file" id="imageFileInput" accept="image/png,image/jpeg,image/webp">
     </div>
 
-    <div id="imagePreviewWrap" style="display: none; margin-bottom: 1rem;">
-      <label style="font-size: 0.6rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--medium-blue);">Preview</label>
-      <div style="margin-top: 0.4rem; padding: 0.5rem; border: 1px solid var(--dark-sky-blue); background: var(--light-sky-blue); text-align: center;">
-        <img id="imagePreview" style="max-width: 100%; max-height: 320px;">
+    <div id="imagePreviewWrap" class="modal-preview-wrap" style="display: none;">
+      <label class="modal-preview-label">Preview</label>
+      <div class="modal-preview-box">
+        <img id="imagePreview">
       </div>
     </div>
 
-    <p style="font-size: 0.8rem; color: var(--medium-blue); font-family: var(--font-display); font-style: italic;">
-      Accepted: PNG, JPEG, WebP. Max 5 MB. The file will be saved to Supabase Storage.
+    <p class="upload-file-hint">Accepted: PNG, JPEG, WebP. Max 5 MB. The file will be saved to Supabase Storage.
     </p>
 
     <div class="modal-actions">
@@ -1565,7 +267,7 @@
 
 <!-- ===== SECTION EDIT MODAL ===== -->
 <div class="modal-overlay" id="sectionModal">
-  <div class="modal" style="max-width: 640px;">
+  <div class="modal modal--sm">
     <div class="modal-stamp" id="sectionModalStamp">Edit Section</div>
     <h2 id="sectionModalTitle">Section</h2>
     <p class="modal-sub">Set the section title, instructions, and an optional reading passage.</p>
@@ -1582,7 +284,7 @@
 
     <div class="modal-field">
       <label>Reading Passage (optional)</label>
-      <textarea id="secEditPassage" placeholder="Paste the article or reading content here. Leave blank for sections without a passage." style="min-height: 140px;"></textarea>
+      <textarea id="secEditPassage" placeholder="Paste the article or reading content here. Leave blank for sections without a passage." class="passage-textarea"></textarea>
     </div>
 
     <div class="modal-actions">
@@ -1594,19 +296,19 @@
 
 <!-- ===== METADATA EDIT MODAL ===== -->
 <div class="modal-overlay" id="metadataModal">
-  <div class="modal" style="max-width: 640px;">
+  <div class="modal modal--sm">
     <div class="modal-stamp">Edit Metadata</div>
     <h2 id="metadataModalTitle">—</h2>
     <p class="modal-sub" id="metadataModalCode">—</p>
 
-    <div style="background: var(--light-sky-blue); border-left: 3px solid var(--medium-blue); padding: 0.85rem 1rem; margin-bottom: 1.5rem; color: var(--medium-blue); font-family: var(--font-display); font-style: italic; font-size: 0.95rem;">
-      <strong style="font-style: normal; font-family: var(--font-body); font-size: 0.85rem;">Locked:</strong>
+    <div class="locked-info">
+      <strong>Locked:</strong>
       Year, Quarter, Type, and Code cannot be changed because they are part of the exam's access code. To change these, archive this exam and create a new one.
     </div>
 
     <form id="metadataForm">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-        <div class="modal-field" style="grid-column: 1 / -1;">
+      <div class="modal-grid">
+        <div class="modal-field full">
           <label>Class</label>
           <select id="metaEditClassId" required></select>
         </div>
@@ -1631,7 +333,7 @@
           <input type="datetime-local" id="metaEditAvailableUntil" required>
         </div>
 
-        <div class="modal-field" style="grid-column: 1 / -1;">
+        <div class="modal-field full">
           <label>Status</label>
           <select id="metaEditStatus" required>
             <option value="active">Active</option>
@@ -1640,7 +342,7 @@
           </select>
         </div>
 
-        <div class="modal-field" style="grid-column: 1 / -1;">
+        <div class="modal-field full">
           <label>Notes</label>
           <textarea id="metaEditNotes"></textarea>
         </div>
@@ -1656,48 +358,48 @@
 
 <!-- ===== CONVERSION PROMPT MODAL ===== -->
 <div class="modal-overlay" id="promptModal">
-  <div class="modal" style="max-width: 820px;">
+  <div class="modal modal--lg">
     <div class="modal-stamp">Claude Conversion Prompt</div>
-    <h2>How to generate your <em style="font-style: italic; color: var(--nd-gold); font-weight: 500;">exam JSON</em></h2>
+    <h2>How to generate your <em class="gold-em">exam JSON</em></h2>
     <p class="modal-sub">Follow these steps to convert your exam document into the format this platform expects.</p>
 
-    <div style="background: var(--light-sky-blue); border-left: 3px solid var(--nd-gold); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
-      <ol style="list-style: none; counter-reset: step; margin: 0; padding: 0;">
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">01</span>
-          Open <a href="https://claude.ai" target="_blank" style="color: var(--nd-gold); font-weight: 600;">claude.ai</a> in a new tab and start a fresh conversation.
+    <div class="prompt-steps-box">
+      <ol class="step-list">
+        <li class="step-item">
+          <span class="step-num">01</span>
+          Open <a href="https://claude.ai" target="_blank" class="gold-link">claude.ai</a> in a new tab and start a fresh conversation.
         </li>
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">02</span>
+        <li class="step-item">
+          <span class="step-num">02</span>
           <strong>Attach your exam document </strong> (PDF or DOCX) to the message. Include your answers either in a separate file or directly within the exam document (e.g., the correct option <mark>highlighted</mark> or in <strong>bold</strong>).
         </li>
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">03</span>
+        <li class="step-item">
+          <span class="step-num">03</span>
           <strong>Copy the prompt below</strong> and paste it into the same message, then send.
         </li>
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">04</span>
+        <li class="step-item">
+          <span class="step-num">04</span>
           Claude will reply with a JSON file. <strong>Download the file</strong> and save it on your computer.
         </li>
-        <li style="counter-increment: step; padding: 0.4rem 0 0.4rem 2.25rem; position: relative; font-size: 0.95rem; color: var(--nd-blue); line-height: 1.5;">
-          <span style="position: absolute; left: 0; top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--nd-gold);">05</span>
-          Come back here and upload the <code style="font-family: 'JetBrains Mono', monospace; background: var(--medium-sky-blue); padding: 0.05rem 0.3rem; font-size: 0.85rem;">.json</code> file. Review the questions, upload any required images, then save.
+        <li class="step-item">
+          <span class="step-num">05</span>
+          Come back here and upload the <code class="inline-code">.json</code> file. Review the questions, upload any required images, then save.
         </li>
       </ol>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; gap: 1rem; flex-wrap: wrap;">
+    <div class="prompt-header">
       <div>
-        <div style="font-size: 0.6rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--medium-blue);">The Prompt</div>
-        <div style="font-family: var(--font-display); font-style: italic; font-size: 0.9rem; color: var(--medium-blue); margin-top: 0.2rem;">Copy this entire block and paste it with your document.</div>
+        <span class="prompt-label">The Prompt</span>
+        <span class="prompt-hint-text">Copy this entire block and paste it with your document.</span>
       </div>
-      <div style="display: flex; gap: 0.5rem;">
-        <button type="button" class="btn-secondary" id="togglePromptBtn" style="padding: 0.55rem 1rem;">Expand</button>
-        <button type="button" class="btn-primary" id="copyPromptBtn" style="padding: 0.55rem 1.25rem;">Copy Prompt</button>
+      <div class="prompt-header-actions">
+        <button type="button" id="togglePromptBtn" class="btn-secondary btn--compact">Expand</button>
+        <button type="button" class="btn-primary" id="copyPromptBtn">Copy Prompt</button>
       </div>
     </div>
 
-    <pre id="promptBox" style="background: var(--nd-blue); color: var(--light-warm-white); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.55; padding: 1.25rem; max-height: 240px; overflow-y: auto; white-space: pre-wrap; word-break: normal; transition: max-height 0.3s ease; margin: 0;">Loading prompt…</pre>
+    <pre id="promptBox" class="prompt-box">Loading prompt…</pre>
 
     <div class="modal-actions">
       <button type="button" class="btn-secondary" onclick="closePromptModal()">Close</button>
@@ -2242,9 +944,9 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
       const titleEl = document.createElement('div');
       titleEl.style.marginBottom = '1.25rem';
       titleEl.innerHTML = `
-        <div style="font-size: 0.6rem; font-weight: 600; letter-spacing: 0.22em; color: var(--nd-gold); text-transform: uppercase; margin-bottom: 0.3rem;">Exam Title</div>
-        <div style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: var(--nd-blue);">${escapeHtml(examDef.exam_metadata.title)}</div>
-        ${examDef.exam_metadata.instructions ? `<div style="font-style: italic; font-family: var(--font-display); color: var(--medium-blue); margin-top: 0.4rem;">${escapeHtml(examDef.exam_metadata.instructions)}</div>` : ''}
+        <div class="exam-def-stamp">Exam Title</div>
+        <div class="exam-def-title">${escapeHtml(examDef.exam_metadata.title)}</div>
+        ${examDef.exam_metadata.instructions ? `<div class="exam-def-instructions">${escapeHtml(examDef.exam_metadata.instructions)}</div>` : ''}
       `;
       container.appendChild(titleEl);
     }
@@ -2287,10 +989,10 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
       sectionEl.innerHTML = `
         <div class="section-header">
           <div class="section-header-row">
-            <div style="flex: 1; min-width: 0;">
+            <div class="flex-min">
               <div class="section-label">Section ${sIdx + 1} of ${sections.length}</div>
               <div class="section-title-text">${escapeHtml(section.title || 'Untitled section')}</div>
-              ${section.instructions ? `<div style="font-style: italic; font-family: var(--font-display); color: var(--medium-blue); margin-top: 0.3rem; font-size: 0.95rem;">${escapeHtml(section.instructions)}</div>` : ''}
+              ${section.instructions ? `<div class="section-instructions">${escapeHtml(section.instructions)}</div>` : ''}
             </div>
             <div class="section-actions">
               <button class="section-action-btn" title="Move section up" onclick="moveSection(${sIdx}, -1)" ${isFirstSection ? 'disabled' : ''}>↑</button>
@@ -2528,7 +1230,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
           <span class="type-badge">${escapeHtml(q.type || 'unknown')}</span>
           <span class="${gradingClass}">${q.grading || '?'}</span>
           <span class="points">${q.points ?? '?'} pt${q.points === 1 ? '' : 's'}</span>
-          ${q.image ? `<span style="color: var(--medium-blue);">📷 image</span>` : ''}
+          ${q.image ? `<span class="text-medium-blue">📷 image</span>` : ''}
         </div>
       </div>
       ${warningHtml}
@@ -3017,12 +1719,12 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
     container.innerHTML = `
       <div class="editor-section">
         <div class="editor-section-label">Correct Answer</div>
-        <div style="display: flex; gap: 0.6rem; margin-top: 0.4rem;">
-          <label class="sub-radio" style="padding: 0.5rem 1rem; border: 1px solid var(--medium-blue); flex: 1; justify-content: center;">
+        <div class="tf-btn-group">
+          <label class="sub-radio sub-radio--btn">
             <input type="radio" name="tf-answer" value="T" ${q.answer === 'T' ? 'checked' : ''}>
             True
           </label>
-          <label class="sub-radio" style="padding: 0.5rem 1rem; border: 1px solid var(--medium-blue); flex: 1; justify-content: center;">
+          <label class="sub-radio sub-radio--btn">
             <input type="radio" name="tf-answer" value="F" ${q.answer === 'F' ? 'checked' : ''}>
             False
           </label>
@@ -3042,9 +1744,9 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
     container.innerHTML = `
       <div class="editor-section">
         <div class="editor-section-label">Two Options (inside the sentence)</div>
-        <div class="editor-section-hint">Use <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: var(--medium-sky-blue); padding: 0 0.25rem;">{choice}</code> in the prompt to mark where the choice appears. Click the circle to mark the correct one.</div>
+        <div class="editor-section-hint">Use <code class="inline-code">{choice}</code> in the prompt to mark where the choice appears. Click the circle to mark the correct one.</div>
         ${q.options.map((opt, i) => `
-          <div class="sub-row opt-row" style="grid-template-columns: 1fr auto;">
+          <div class="sub-row opt-row">
             <input type="text" data-ic-text="${i}" value="${escapeHtml(opt || '')}" placeholder="Option ${i+1}">
             <label class="sub-radio">
               <input type="radio" name="ic-answer" data-ic-answer="${escapeHtml(opt || '')}" ${q.answer === opt && opt ? 'checked' : ''}>
@@ -3076,7 +1778,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
     container.innerHTML = `
       <div class="editor-section">
         <div class="editor-section-label">Answer</div>
-        <div class="editor-section-hint">Use <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: var(--medium-sky-blue); padding: 0 0.25rem;">{blank}</code> in the prompt to mark where the blank goes.</div>
+        <div class="editor-section-hint">Use <code class="inline-code">{blank}</code> in the prompt to mark where the blank goes.</div>
         <div class="modal-field">
           <label>Correct Answer</label>
           <input type="text" id="fb-answer" value="${escapeHtml(q.answer || '')}">
@@ -3085,7 +1787,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
           <label>Accepted Variants (comma separated)</label>
           <input type="text" id="fb-accepted" value="${escapeHtml(q.accepted_answers.join(', '))}" placeholder="e.g. cannot, can not, can't">
         </div>
-        <label class="sub-radio" style="margin-top: 0.5rem;">
+        <label class="sub-radio sub-radio--mt">
           <input type="checkbox" id="fb-case" ${q.case_sensitive ? 'checked' : ''}>
           Case sensitive
         </label>
@@ -3110,9 +1812,9 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
       <div class="editor-section">
         <div class="editor-section-label">
           <span>Blanks (in order)</span>
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--medium-blue);">${q.blanks.length} blank${q.blanks.length === 1 ? '' : 's'}</span>
+          <span class="q-meta-mono">${q.blanks.length} blank${q.blanks.length === 1 ? '' : 's'}</span>
         </div>
-        <div class="editor-section-hint">Each <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: var(--medium-sky-blue); padding: 0 0.25rem;">{blank}</code> in the prompt corresponds to one row below, in order.</div>
+        <div class="editor-section-hint">Each <code class="inline-code">{blank}</code> in the prompt corresponds to one row below, in order.</div>
         <div class="blank-row-header">
           <span>ID</span>
           <span>Answer</span>
@@ -3132,7 +1834,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
           `).join('')}
         </div>
         <button class="add-row-btn" id="addBlankBtn">+ Add Blank</button>
-        <label class="sub-radio" style="margin-top: 0.6rem;">
+        <label class="sub-radio sub-radio--mt">
           <input type="checkbox" id="fbm-case" ${q.case_sensitive ? 'checked' : ''}>
           Case sensitive
         </label>
@@ -3498,7 +2200,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
           <label>Word Pool (comma separated)</label>
           <input type="text" id="pw-pool" value="${escapeHtml(q.word_pool.join(', '))}" placeholder="e.g. spring, snow, flower, people, garden">
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+        <div class="grid-2col">
           <div class="modal-field">
             <label>Required Sentences</label>
             <input type="number" id="pw-required" value="${q.required_count ?? 5}" min="1">
@@ -3548,7 +2250,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
             <input type="text" id="il-alt" value="${escapeHtml(q.image.alt || '')}" placeholder="What does the image show?">
           </div>
         </div>
-        <div style="font-style: italic; font-family: var(--font-display); font-size: 0.85rem; color: var(--medium-blue);">
+        <div class="editor-note">
           ${q.image.url ? '✓ Image uploaded' : 'Image not yet uploaded — use the image inventory section above to upload.'}
         </div>
       </div>
@@ -3573,7 +2275,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
           `).join('')}
         </div>
         <button class="add-row-btn" id="addLabelBtn">+ Add Label</button>
-        <label class="sub-radio" style="margin-top: 0.6rem;">
+        <label class="sub-radio sub-radio--mt">
           <input type="checkbox" id="il-case" ${q.case_sensitive ? 'checked' : ''}>
           Case sensitive
         </label>
@@ -3647,7 +2349,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
             <input type="text" id="im-alt" value="${escapeHtml(q.image.alt || '')}" placeholder="What does the image show?">
           </div>
         </div>
-        <div style="font-style: italic; font-family: var(--font-display); font-size: 0.85rem; color: var(--medium-blue);">
+        <div class="editor-note">
           ${q.image.url ? '✓ Image uploaded' : 'Image not yet uploaded — use the image inventory section above to upload.'}
         </div>
       </div>
@@ -3664,7 +2366,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
         <div class="editor-section-label">Items (with correct region)</div>
         <div id="imItemsList">
           ${q.items.map((it, i) => `
-            <div class="sub-row" style="grid-template-columns: 1fr 1fr auto;">
+            <div class="sub-row sub-row--3col">
               <input type="text" data-im-item="${i}" value="${escapeHtml(it || '')}" placeholder="Item text">
               <select data-im-answer="${i}">
                 <option value="">— pick region —</option>
@@ -4044,3 +2746,7 @@ Use {blank} for each position; provide one entry in \`blanks\` per blank.
 
 </body>
 </html>
+
+
+
+
